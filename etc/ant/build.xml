@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="pylos" default="compile" basedir="../..">
+	
+	<property name="src.dir"   value="src"/>
+	<property name="build.dir" value="bin"/>
+	
+	<target name="clean" description="Deletes output directories.">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${build.dir}"/>
+		</delete>
+	</target>
+	
+	<target name="compile" description="Compile classes">
+		<javac srcdir="${src.dir}" destdir="${build.dir}"/>
+	</target>
+	
+	<target name="run.board" depends="compile" description="Run project core">
+		<java classname="fr.lemerdy.pylos.game.Pylos">
+			<classpath>
+				<pathelement path="${build.dir}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="run.scene" depends="compile" description="Run project samples">
+		<java classname="fr.lemerdy.pylos.scene.Scene">
+			<classpath>
+				<pathelement path="${build.dir}"/>
+				<pathelement location="${java.home}/lib/ext/j3dutils.jar"/>
+			</classpath>
+		</java>
+	</target>
+	
+</project>

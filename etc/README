@@ -1,0 +1,6 @@
+Implémentation du jeu pylos. Références disponibles sur
+http://www.gigamic.com/jeuxfrancais/pylosf.htm.
+
+Pour compiler le projet, l'api java3d est requise. Son site de référence se
+trouve sur https://java3d.dev.java.net/
+
