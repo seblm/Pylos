@@ -2,7 +2,7 @@ package fr.lemerdy.pylos.game;
 
 public interface Game {
 	
-	public void put(final int x, final int y);
+	public void put(final int x, final int y) throws IllegalArgumentException, IllegalStateException;
 	
 	public void remove(int x, int y);
 	

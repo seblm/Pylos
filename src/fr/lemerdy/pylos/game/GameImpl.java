@@ -3,6 +3,10 @@
  */
 package fr.lemerdy.pylos.game;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * @author Sébastian Le Merdy
  */
@@ -182,7 +186,7 @@ public class GameImpl implements Game {
 		}
 	}
 	
-	public void put(final int x, final int y) {
+	public void put(final int x, final int y) throws IllegalStateException, IllegalArgumentException {
 		if (currentState != State.CLASSIC) {
 			throw new IllegalStateException("can't put a new ball : have to pass or remove ball");
 		}
@@ -190,24 +194,14 @@ public class GameImpl implements Game {
 		put(x, y, 3-Math.min(3, (int)(Math.hypot(x, y))));
 	}
 	
-	private void put(final int x, final int y, final int level) {
-		if (level == 0) {
+	private void put(final int x, final int y, final int level) throws IllegalArgumentException {
+		if (board.get(x, y, level) != null) {
+			throw new IllegalArgumentException("already filled");
+		} else if (level == 0 || (board.get(x+1, y+1, level-1) != null
+				&& board.get(x+1, y-1, level-1) != null
+				&& board.get(x-1, y-1, level-1) != null
+				&& board.get(x-1, y+1, level-1) != null)) {
 			// end of recursive loop for odd coordinates
-			if (board.get(x, y, level) != null) {
-				throw new IllegalArgumentException("already filled");
-			} else {
-				board.set(x, y, level, currentColor);
-				if (board.hasSquare(x, y, level, currentColor) || board.hasLine(x, y, level, currentColor)) {
-					currentState = State.SPECIAL1;
-				} else {
-					switchColor();
-				}
-			}
-		} else if (board.get(x+1, y+1, level-1) != null
-			&& board.get(x+1, y-1, level-1) != null
-			&& board.get(x-1, y-1, level-1) != null
-			&& board.get(x-1, y+1, level-1) != null
-			&& board.get(x, y, level) == null) {
 			board.set(x, y, level, currentColor);
 			if (board.hasSquare(x, y, level, currentColor) || board.hasLine(x, y, level, currentColor)) {
 				currentState = State.SPECIAL1;
@@ -215,8 +209,8 @@ public class GameImpl implements Game {
 				switchColor();
 			}
 		} else if (level == 1) {
-			// end of recursive loop for pair coordinates
-			throw new IllegalArgumentException("already filled");
+			// en of recursive loo for pair coordinates
+			throw new IllegalArgumentException("can't put a ball on anything else than a square of 4 balls");
 		} else {
 			put(x, y, level - 2);
 		}
@@ -260,6 +254,131 @@ public class GameImpl implements Game {
 	
 	@Override
 	public void move(int xFrom, int yFrom, int xTo, int yTo) {
+		if (!currentState.equals(State.CLASSIC)) {
+			throw new IllegalArgumentException("can't move : have to pass or remove a ball");
+		}
+		validateCoordinates(xFrom, yFrom);
+		validateCoordinates(xTo, yTo);
+		int level = 3-Math.min(3, (int)(Math.hypot(xFrom, yFrom)));
+		int levelTo = 3-Math.min(3, (int)(Math.hypot(xTo, yTo)));
+		if (board.get(xFrom, yFrom, level) == null) {
+			throw new IllegalArgumentException("can't move : there is no ball to move from");
+		}
+		if (!currentColor.equals(board.get(xFrom, yFrom, level))) {
+			throw new IllegalArgumentException("can't move : ball don't belongs to current color");
+		}
+		if (board.get(xTo, yTo, levelTo) != null) {
+			throw new IllegalArgumentException("can't move : there is already a ball to destination's move");
+		}
+		// goal : validate that ball identified by (xFrom, yFrom) don't have any ball on it
+		boolean freeToMove = true;
+		try {
+			validateCoordinates(xFrom-1, yFrom-1);
+			try {
+				freeToMove &= board.get(xFrom-1, yFrom-1, level+1) == null;
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
+			}
+		} catch (IllegalArgumentException e) {
+		}
+		try {
+			validateCoordinates(xFrom+1, yFrom-1);
+			try {
+				freeToMove &= board.get(xFrom+1, yFrom-1, level+1) == null;
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
+			}
+		} catch (IllegalArgumentException e) {
+		}
+		try {
+			validateCoordinates(xFrom+1, yFrom+1);
+			try {
+				freeToMove &= board.get(xFrom+1, yFrom+1, level+1) == null;
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
+			}
+		} catch (IllegalArgumentException e) {
+		}
+		try {
+			validateCoordinates(xFrom-1, yFrom+1);
+			try {
+				freeToMove &= board.get(xFrom-1, yFrom+1, level+1) == null;
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
+			}
+		} catch (IllegalArgumentException e) {
+		}
+		put(xTo, yTo);
+		board.set(xFrom, yFrom, level, null);
+	}
+	
+	public static void main(String[] args) throws IOException {
+		Game g = new GameImpl();
+		String command = null;
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		while (!"quit".equals(command)) {
+			((GameImpl) g).printBoard();
+			System.out.print(g.getCurrentColor() + "> ");
+			command = in.readLine();
+			if ("put".equals(command)) {
+				try {
+					System.out.print("x> ");
+					command = in.readLine();
+					int x = Integer.parseInt(command);
+					System.out.print("y> ");
+					command = in.readLine();
+					int y = Integer.parseInt(command);
+					try {
+						g.put(x, y);
+					} catch (Exception e) {
+						System.err.println(e.getMessage());
+					}
+				} catch (NumberFormatException e) {
+					System.err.println(e.getMessage());
+				}
+			} else if ("move".equals(command)) {
+				try {
+					System.out.print("xFrom> ");
+					command = in.readLine();
+					int xFrom = Integer.parseInt(command);
+					System.out.print("yFrom> ");
+					command = in.readLine();
+					int yFrom = Integer.parseInt(command);
+					System.out.print("xTo> ");
+					command = in.readLine();
+					int xTo = Integer.parseInt(command);
+					System.out.print("yTo> ");
+					command = in.readLine();
+					int yTo = Integer.parseInt(command);
+					try {
+						g.move(xFrom, yFrom, xTo, yTo);
+					} catch (Exception e) {
+						System.err.println(e.getMessage());
+					}
+				} catch (NumberFormatException e) {
+					System.err.println(e.getMessage());
+				}
+			} else if ("pass".equals(command)) {
+				try {
+					g.pass();
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
+			} else if ("remove".equals(command)) {
+				System.out.print("x> ");
+				command = in.readLine();
+				int x = Integer.parseInt(command);
+				System.out.print("y> ");
+				command = in.readLine();
+				int y = Integer.parseInt(command);
+				try {
+					g.remove(x, y);
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
+			}
+		}
+		in.close();
 	}
 	
 }
