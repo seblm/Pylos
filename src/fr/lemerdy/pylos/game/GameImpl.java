@@ -6,6 +6,12 @@ package fr.lemerdy.pylos.game;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Enumeration;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import fr.lemerdy.pylos.scene.Scene;
 
 /**
  * @author Sébastian Le Merdy
@@ -42,6 +48,16 @@ public class GameImpl implements Game {
 			}
 		}
 		
+		/**
+		 * Tell if at least one square is formed with a board position.
+		 * 
+		 * @param x abscissa of position
+		 * @param y ordinate of position
+		 * @param level level of position
+		 * @param color color of square to test with
+		 * @return true if at least one square is formed with this board
+		 * position
+		 */
 		public boolean hasSquare(final int x, final int y, final int level, final Color color) {
 			boolean hasSquare = false;
 			try {
@@ -83,14 +99,29 @@ public class GameImpl implements Game {
 			}
 			return hasSquare;
 		}
-	
+		
 		public boolean hasLine(final int x, final int y, final int level, final Color color) {
-			if (level > 1) {
-				return false;
+			boolean hasLine = false;
+			if (level == 1) {
+				hasLine = (color.equals(get(x, -2, level))
+					&& color.equals(get(x, 0, level))
+					&& color.equals(get(x, 2, level)))
+					|| (color.equals(get(-2, y, level))
+						&& color.equals(get(0, y, level))
+						&& color.equals(get(2, y, level)));
+			} else if (level == 0) {
+				hasLine = (color.equals(get(x, -3, level))
+					&& color.equals(get(x, -1, level))
+					&& color.equals(get(x, 1, level))
+					&& color.equals(get(x, 3, level)))
+					|| (color.equals(get(-3, y, level))
+						&& color.equals(get(-1, y, level))
+						&& color.equals(get(1, y, level))
+						&& color.equals(get(3, y, level)));
 			}
-			// TODO to implement
-			return false;
+			return hasLine;
 		}
+
 	}
 	
 	private Color currentColor;
@@ -209,7 +240,7 @@ public class GameImpl implements Game {
 				switchColor();
 			}
 		} else if (level == 1) {
-			// en of recursive loo for pair coordinates
+			// end of recursive loop for pair coordinates
 			throw new IllegalArgumentException("can't put a ball on anything else than a square of 4 balls");
 		} else {
 			put(x, y, level - 2);
@@ -314,6 +345,9 @@ public class GameImpl implements Game {
 	
 	public static void main(String[] args) throws IOException {
 		Game g = new GameImpl();
+		Scene scene = new Scene();
+		scene.setSize(640, 480);
+		scene.setVisible(true);
 		String command = null;
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		while (!"quit".equals(command)) {
@@ -330,6 +364,7 @@ public class GameImpl implements Game {
 					int y = Integer.parseInt(command);
 					try {
 						g.put(x, y);
+						scene.put(x, y, 0, g.getCurrentColor() == Color.BLACK);
 					} catch (Exception e) {
 						System.err.println(e.getMessage());
 					}
@@ -376,9 +411,19 @@ public class GameImpl implements Game {
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
 				}
+			} else if ("log".equals(command)) {
+				Enumeration<String> loggerNames = LogManager.getLogManager().getLoggerNames();
+				while (loggerNames.hasMoreElements()) {
+					Logger logger = LogManager.getLogManager().getLogger(loggerNames.nextElement());
+					System.out.println(logger.getName() + "\t" + logger.getLevel());
+					for (Handler handler : logger.getHandlers()) {
+						System.out.println("\t" + handler.getClass().getName());
+					}
+				}
 			}
 		}
 		in.close();
+		scene.dispose();
 	}
 	
 }

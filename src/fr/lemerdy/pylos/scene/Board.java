@@ -25,15 +25,15 @@ public class Board extends Shape3D {
 		TriangleFanArray board = new TriangleFanArray(16 ,TriangleFanArray.COORDINATES | TriangleFanArray.COLOR_3, stripVertexCounts);
 		
 		// Declares points. 
-		Point3f topSouthEast = new Point3f( 0.5f, -0.46f,  0.5f);
-		Point3f topSouthWest = new Point3f(-0.5f, -0.46f,  0.5f);
-		Point3f topNorthWest = new Point3f(-0.5f, -0.46f, -0.5f);
-		Point3f topNorthEast = new Point3f( 0.5f, -0.46f, -0.5f);
+		Point3f topSouthEast = new Point3f( 0.5f,  0.5f, -0.46f);
+		Point3f topSouthWest = new Point3f(-0.5f,  0.5f, -0.46f);
+		Point3f topNorthWest = new Point3f(-0.5f, -0.5f, -0.46f);
+		Point3f topNorthEast = new Point3f( 0.5f, -0.5f, -0.46f);
 		
-		Point3f bottomSouthEast = new Point3f( 0.6f, -0.5f,  0.6f);
-		Point3f bottomSouthWest = new Point3f(-0.6f, -0.5f,  0.6f);
-		Point3f bottomNorthWest = new Point3f(-0.6f, -0.5f, -0.6f);
-		Point3f bottomNorthEast = new Point3f( 0.6f, -0.5f, -0.6f);
+		Point3f bottomSouthEast = new Point3f( 0.6f,  0.6f, -0.5f);
+		Point3f bottomSouthWest = new Point3f(-0.6f,  0.6f, -0.5f);
+		Point3f bottomNorthWest = new Point3f(-0.6f, -0.6f, -0.5f);
+		Point3f bottomNorthEast = new Point3f( 0.6f, -0.6f, -0.5f);
 		
 		// Link each point.
 		board.setCoordinate(0 ,    topSouthEast);

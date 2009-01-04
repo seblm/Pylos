@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.logging.Logger;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
@@ -29,9 +30,13 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
  */
 public class Scene extends Frame implements WindowListener {
 	
+	private static final Logger logger = Logger.getLogger(Scene.class.getName());
+	
 	private static final long serialVersionUID = 1L;
 	
-	private BranchGroup scene;
+	private SimpleUniverse universe;
+	
+	private TransformGroup transformGroup;
 	
 	private final Appearance white;
 	
@@ -43,17 +48,17 @@ public class Scene extends Frame implements WindowListener {
 		this.addWindowListener(this);
 		this.setLayout(new BorderLayout());
 		
-		// Setting 
+		// Settings
 		Canvas3D canvas3D = new Canvas3D(ConfiguredUniverse.getPreferredConfiguration());
 		this.add("Center", canvas3D);
 		
 		// Constructing scene
-		scene = new BranchGroup();
-		TransformGroup transformGroup = new TransformGroup();
-		// transformGroup.addChild(new Balls());
+		BranchGroup scene = new BranchGroup();
+		transformGroup = new TransformGroup();
 		transformGroup.addChild(new Board());
 		transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		transformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
 		
 		// defining balls colors
 		Color3f whiteColor = new Color3f(1f, 1f, .78f);
@@ -78,17 +83,21 @@ public class Scene extends Frame implements WindowListener {
 		directionalLight.setColor(new Color3f(1f, 1f, .78f));
 		scene.addChild(directionalLight);
 		scene.compile();
-		SimpleUniverse simpleUniverse = new SimpleUniverse(canvas3D);
-		simpleUniverse.getViewingPlatform().setNominalViewingTransform();
-		simpleUniverse.addBranchGraph(scene);
+		universe = new SimpleUniverse(canvas3D);
+		universe.getViewingPlatform().setNominalViewingTransform();
+		universe.addBranchGraph(scene);
 	}
 	
 	public void put(int x, int y, int z, boolean color) {
+		logger.entering(this.getName(), "put", new Object[] { x, y, z, (color?"white":"black") });
+		BranchGroup ball = new BranchGroup();
 		Transform3D transform3D = new Transform3D();
 		transform3D.set(new Vector3f(.12f * x, .1f * y, .1f * z));
 		TransformGroup transformGroup = new TransformGroup(transform3D);
 		transformGroup.addChild(new Sphere(.1f, (color?white:black)));
-		scene.addChild(transformGroup);
+		ball.addChild(transformGroup);
+		ball.compile();
+		this.transformGroup.addChild(ball);
 	}
 	
 	public static void main(String args[]) {
@@ -113,7 +122,7 @@ public class Scene extends Frame implements WindowListener {
 	public void windowClosing(WindowEvent windowEvent) { System.exit(0); }
 	public void windowOpened(WindowEvent windowEvent) {}
 	public void windowActivated(WindowEvent windowEvent) {}
-	public void windowClosed(WindowEvent windowEvent) {}
+	public void windowClosed(WindowEvent windowEvent) { System.exit(0); }
 	public void windowDeactivated(WindowEvent windowEvent) {}
 
 }

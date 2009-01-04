@@ -31,4 +31,6 @@
 		</java>
 	</target>
 	
+	<target name="build" depends="compile" description="Build " />
+	
 </project>
