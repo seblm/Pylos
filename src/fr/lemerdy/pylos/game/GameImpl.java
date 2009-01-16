@@ -5,11 +5,14 @@ package fr.lemerdy.pylos.game;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 import fr.lemerdy.pylos.scene.Scene;
 
@@ -217,15 +220,16 @@ public class GameImpl implements Game {
 		}
 	}
 	
-	public void put(final int x, final int y) throws IllegalStateException, IllegalArgumentException {
+	@Override
+	public int put(final int x, final int y) throws IllegalStateException, IllegalArgumentException {
 		if (currentState != State.CLASSIC) {
 			throw new IllegalStateException("can't put a new ball : have to pass or remove ball");
 		}
 		validateCoordinates(x, y);
-		put(x, y, 3-Math.min(3, (int)(Math.hypot(x, y))));
+		return put(x, y, 3-Math.min(3, (int)(Math.hypot(x, y))));
 	}
 	
-	private void put(final int x, final int y, final int level) throws IllegalArgumentException {
+	private int put(final int x, final int y, final int level) throws IllegalArgumentException {
 		if (board.get(x, y, level) != null) {
 			throw new IllegalArgumentException("already filled");
 		} else if (level == 0 || (board.get(x+1, y+1, level-1) != null
@@ -243,8 +247,10 @@ public class GameImpl implements Game {
 			// end of recursive loop for pair coordinates
 			throw new IllegalArgumentException("can't put a ball on anything else than a square of 4 balls");
 		} else {
+			// recursive loop
 			put(x, y, level - 2);
 		}
+		return level;
 	}
 	
 	public void remove(int x, int y) {
@@ -344,9 +350,12 @@ public class GameImpl implements Game {
 	}
 	
 	public static void main(String[] args) throws IOException {
+		Preferences.systemRoot().put("java.util.logging.config.file", "/logging.properties");
+//		LogManager.getLogManager().readConfiguration(GameImpl.class.getResourceAsStream("/logging.properties"));
 		Game g = new GameImpl();
 		Scene scene = new Scene();
 		scene.setSize(640, 480);
+		scene.setLocationRelativeTo(null);
 		scene.setVisible(true);
 		String command = null;
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -363,8 +372,8 @@ public class GameImpl implements Game {
 					command = in.readLine();
 					int y = Integer.parseInt(command);
 					try {
-						g.put(x, y);
-						scene.put(x, y, 0, g.getCurrentColor() == Color.BLACK);
+						final int level = g.put(x, y);
+						scene.put(x, y, level, g.getCurrentColor() == Color.BLACK);
 					} catch (Exception e) {
 						System.err.println(e.getMessage());
 					}

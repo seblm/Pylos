@@ -1,8 +1,17 @@
 package fr.lemerdy.pylos.game;
 
 public interface Game {
-	
-	public void put(final int x, final int y) throws IllegalArgumentException, IllegalStateException;
+
+	/**
+	 * Put a ball on board with current color ; switch to next color
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalStateException
+	 */
+	public int put(final int x, final int y) throws IllegalArgumentException, IllegalStateException;
 	
 	public void remove(int x, int y);
 	
