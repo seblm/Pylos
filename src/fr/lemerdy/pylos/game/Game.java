@@ -17,7 +17,7 @@ public interface Game {
 	
 	public void pass();
 	
-	public void move(final int xFrom, final int yFrom, final int xTo, final int yTo);
+	public int[] move(final int xFrom, final int yFrom, final int xTo, final int yTo);
 	
 	public Color getCurrentColor();
 

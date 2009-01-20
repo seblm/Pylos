@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="pylos" default="build">
+	
+	<property name="src.dir"   value="src"/>
+	<property name="build.dir" value="bin"/>
+	
+	<target name="clean" description="deletes output directories">
+		<delete includeEmptyDirs="true" dir="${build.dir}" />
+	</target>
+	
+	<target name="compile" depends="clean" description="compile classes">
+		<mkdir dir="${build.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${build.dir}" />
+	</target>
+	
+	<target name="build" depends="compile" description="build a release jar">
+		<jar destfile="pylos.jar">
+			<fileset dir="${build.dir}" />
+		</jar>
+	</target>
+	
+</project>

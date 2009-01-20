@@ -5,27 +5,23 @@ package fr.lemerdy.pylos.game;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 
 import fr.lemerdy.pylos.scene.Scene;
 
 /**
- * @author Sébastian Le Merdy
+ * @author SŽbastian Le Merdy
  */
 public class GameImpl implements Game {
+	
+	private static final Logger logger = Logger.getLogger(Scene.class.getName());
 	
 	/**
 	 * A Board is a way to store balls. It doesn't perform coordinates
 	 * validation outside of physicals array bounds.
 	 * 
-	 * @author Sébastian
+	 * @author SŽbastian Le Merdy
 	 */
 	private class Board {
 
@@ -220,8 +216,8 @@ public class GameImpl implements Game {
 		}
 	}
 	
-	@Override
 	public int put(final int x, final int y) throws IllegalStateException, IllegalArgumentException {
+		logger.entering(this.getClass().getName(), "put", new Object[] { x, y });
 		if (currentState != State.CLASSIC) {
 			throw new IllegalStateException("can't put a new ball : have to pass or remove ball");
 		}
@@ -230,6 +226,7 @@ public class GameImpl implements Game {
 	}
 	
 	private int put(final int x, final int y, final int level) throws IllegalArgumentException {
+		logger.entering(this.getClass().getName(), "put", new Object[] { x, y, level });
 		if (board.get(x, y, level) != null) {
 			throw new IllegalArgumentException("already filled");
 		} else if (level == 0 || (board.get(x+1, y+1, level-1) != null
@@ -237,6 +234,7 @@ public class GameImpl implements Game {
 				&& board.get(x-1, y-1, level-1) != null
 				&& board.get(x-1, y+1, level-1) != null)) {
 			// end of recursive loop for odd coordinates
+			logger.finer("end of recursive loop for odd coordinates");
 			board.set(x, y, level, currentColor);
 			if (board.hasSquare(x, y, level, currentColor) || board.hasLine(x, y, level, currentColor)) {
 				currentState = State.SPECIAL1;
@@ -245,10 +243,11 @@ public class GameImpl implements Game {
 			}
 		} else if (level == 1) {
 			// end of recursive loop for pair coordinates
+			logger.finer("end of recursive loop for pair coordinates");
 			throw new IllegalArgumentException("can't put a ball on anything else than a square of 4 balls");
 		} else {
 			// recursive loop
-			put(x, y, level - 2);
+			return put(x, y, level - 2);
 		}
 		return level;
 	}
@@ -279,7 +278,6 @@ public class GameImpl implements Game {
 		}
 	}
 	
-	@Override
 	public void pass() {
 		if (currentState.equals(State.CLASSIC)) {
 			throw new IllegalArgumentException("can't pass : have to put a ball");
@@ -289,8 +287,7 @@ public class GameImpl implements Game {
 		}
 	}
 	
-	@Override
-	public void move(int xFrom, int yFrom, int xTo, int yTo) {
+	public int[] move(int xFrom, int yFrom, int xTo, int yTo) {
 		if (!currentState.equals(State.CLASSIC)) {
 			throw new IllegalArgumentException("can't move : have to pass or remove a ball");
 		}
@@ -309,49 +306,36 @@ public class GameImpl implements Game {
 		}
 		// goal : validate that ball identified by (xFrom, yFrom) don't have any ball on it
 		boolean freeToMove = true;
+		validateCoordinates(xFrom-1, yFrom-1);
 		try {
-			validateCoordinates(xFrom-1, yFrom-1);
-			try {
-				freeToMove &= board.get(xFrom-1, yFrom-1, level+1) == null;
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
-			}
+			freeToMove &= board.get(xFrom-1, yFrom-1, level+1) == null;
 		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
 		}
+		validateCoordinates(xFrom+1, yFrom-1);
 		try {
-			validateCoordinates(xFrom+1, yFrom-1);
-			try {
-				freeToMove &= board.get(xFrom+1, yFrom-1, level+1) == null;
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
-			}
+			freeToMove &= board.get(xFrom+1, yFrom-1, level+1) == null;
 		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
 		}
+		validateCoordinates(xFrom+1, yFrom+1);
 		try {
-			validateCoordinates(xFrom+1, yFrom+1);
-			try {
-				freeToMove &= board.get(xFrom+1, yFrom+1, level+1) == null;
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
-			}
+			freeToMove &= board.get(xFrom+1, yFrom+1, level+1) == null;
 		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
 		}
+		validateCoordinates(xFrom-1, yFrom+1);
 		try {
-			validateCoordinates(xFrom-1, yFrom+1);
-			try {
-				freeToMove &= board.get(xFrom-1, yFrom+1, level+1) == null;
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
-			}
+			freeToMove &= board.get(xFrom-1, yFrom+1, level+1) == null;
 		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("can't move : there is(are) ball(s) on it");
 		}
-		put(xTo, yTo);
+		put(xTo, yTo, levelTo);
 		board.set(xFrom, yFrom, level, null);
+		return new int[] { level, levelTo };
 	}
 	
 	public static void main(String[] args) throws IOException {
-		Preferences.systemRoot().put("java.util.logging.config.file", "/logging.properties");
-//		LogManager.getLogManager().readConfiguration(GameImpl.class.getResourceAsStream("/logging.properties"));
 		Game g = new GameImpl();
 		Scene scene = new Scene();
 		scene.setSize(640, 480);
@@ -395,7 +379,9 @@ public class GameImpl implements Game {
 					command = in.readLine();
 					int yTo = Integer.parseInt(command);
 					try {
-						g.move(xFrom, yFrom, xTo, yTo);
+						int levels[] = g.move(xFrom, yFrom, xTo, yTo);
+						scene.put(xTo, yTo, levels[1], g.getCurrentColor() == Color.BLACK);
+						// scene.remove(xFrom, yFrom, levels[0]);
 					} catch (Exception e) {
 						System.err.println(e.getMessage());
 					}
@@ -419,15 +405,6 @@ public class GameImpl implements Game {
 					g.remove(x, y);
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
-				}
-			} else if ("log".equals(command)) {
-				Enumeration<String> loggerNames = LogManager.getLogManager().getLoggerNames();
-				while (loggerNames.hasMoreElements()) {
-					Logger logger = LogManager.getLogManager().getLogger(loggerNames.nextElement());
-					System.out.println(logger.getName() + "\t" + logger.getLevel());
-					for (Handler handler : logger.getHandlers()) {
-						System.out.println("\t" + handler.getClass().getName());
-					}
 				}
 			}
 		}
