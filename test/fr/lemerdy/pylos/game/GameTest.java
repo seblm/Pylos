@@ -1,27 +1,27 @@
-/**
- * 
- */
 package fr.lemerdy.pylos.game;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author Sébastian
+ * @author SÃ©bastian Le Merdy <sebastian.lemerdy@gmail.com>
  */
 public class GameTest {
-	
+
 	@Test
 	public void testGetCurrentColor() {
 		Game g = new GameImpl();
 		Color currentColor = g.getCurrentColor();
 		try {
 			g.put(-1, 3);
-			Assert.assertFalse("currentColor has to be switched when an action was correct", currentColor.equals(g.getCurrentColor()));
+			Assert
+					.assertFalse(
+							"currentColor has to be switched when an action was correct",
+							currentColor.equals(g.getCurrentColor()));
 		} catch (Exception e) {
 		}
 	}
-	
+
 	@Test
 	public void testMove() {
 		Game g = new GameImpl();
@@ -31,7 +31,8 @@ public class GameTest {
 			Assert.fail("wrong coordinates");
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
-			Assert.fail("wrong coordinates must throw an IllegalArgumentException");
+			Assert
+					.fail("wrong coordinates must throw an IllegalArgumentException");
 		}
 		// good coordinates
 		try {
@@ -45,7 +46,8 @@ public class GameTest {
 			Assert.fail("place already in use");
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
-			Assert.fail("place already in use must throw an IllegalArgumentException");
+			Assert
+					.fail("place already in use must throw an IllegalArgumentException");
 		}
 		// put a ball on invalid level
 		try {
@@ -63,14 +65,16 @@ public class GameTest {
 			Assert.fail("ball can't be stand on only 3 balls under");
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
-			Assert.fail("put a ball on instable place must throw an IllegalArgumentException");
+			Assert
+					.fail("put a ball on instable place must throw an IllegalArgumentException");
 		}
 		// put a ball on second level
 		g.put(-1, -3);
 		try {
 			g.put(-2, -2);
 		} catch (Exception e) {
-			Assert.fail("put a ball on second level must not throw any Exception");
+			Assert
+					.fail("put a ball on second level must not throw any Exception");
 		}
 		// put a ball on third level
 		g.put(1, -3);
@@ -84,11 +88,12 @@ public class GameTest {
 		try {
 			g.put(-1, -1);
 		} catch (Exception e) {
-			Assert.fail("put a ball on third level must not throw any Exception");
+			Assert
+					.fail("put a ball on third level must not throw any Exception");
 		}
 		((GameImpl) g).printBoard();
 	}
-	
+
 	@Test
 	public void testGame() {
 		Game g = new GameImpl();
@@ -108,7 +113,8 @@ public class GameTest {
 		g.put(-3, -1);
 		try {
 			g.put(1, -3);
-			Assert.fail("after square legal moves are only one remove and pass or two removes");
+			Assert
+					.fail("after square legal moves are only one remove and pass or two removes");
 		} catch (IllegalStateException e) {
 		}
 		try {
@@ -118,7 +124,8 @@ public class GameTest {
 		}
 		try {
 			g.put(-3, 1);
-			Assert.fail("after square and a remove legal moves are only one remove or pass");
+			Assert
+					.fail("after square and a remove legal moves are only one remove or pass");
 		} catch (IllegalStateException e) {
 		}
 		g.pass();
