@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/J3D-JRE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/seb/Library/Java/jogl-1.1.1-macosx-universal/lib"/>

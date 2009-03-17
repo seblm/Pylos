@@ -19,4 +19,8 @@
 		</jar>
 	</target>
 	
+	<target name="javadoc" description="generates javadoc">
+		<javadoc destdir="doc/javadoc" sourcepath="src" />
+	</target>
+	
 </project>

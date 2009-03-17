@@ -225,9 +225,10 @@ public class GameImpl implements Game {
 	public static void main(String[] args) throws IOException {
 		Game g = new GameImpl();
 		Scene scene = new Scene();
-		scene.setSize(640, 480);
+		scene.setSize(640, 600);
 		scene.setLocationRelativeTo(null);
 		scene.setVisible(true);
+		
 		String command = null;
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		while (!"quit".equals(command)) {
@@ -243,9 +244,9 @@ public class GameImpl implements Game {
 					command = in.readLine();
 					int y = Integer.parseInt(command);
 					try {
+						Color currentColor = g.getCurrentColor();
 						final int level = g.put(x, y);
-						scene.put(x, y, level,
-								g.getCurrentColor() == Color.BLACK);
+						scene.put(x, y, level, currentColor == Color.WHITE);
 					} catch (Exception e) {
 						System.err.println(e.getMessage());
 					}
