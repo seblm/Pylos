@@ -1,4 +1,4 @@
-package fr.lemerdy.pylos.game;
+package pylos.game;
 
 import java.util.Observable;
 

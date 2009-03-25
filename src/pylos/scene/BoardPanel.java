@@ -1,4 +1,4 @@
-package fr.lemerdy.pylos.scene;
+package pylos.scene;
 
 import java.awt.Button;
 import java.awt.GridLayout;
@@ -9,9 +9,10 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
-import fr.lemerdy.pylos.game.Color;
-import fr.lemerdy.pylos.game.Column;
-import fr.lemerdy.pylos.game.Game;
+import pylos.game.Color;
+import pylos.game.Column;
+import pylos.game.Game;
+
 
 public class BoardPanel extends Panel implements Observer {
 

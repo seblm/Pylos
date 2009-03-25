@@ -1,3 +1,3 @@
-package fr.lemerdy.pylos.game;
+package pylos.game;
 
 public enum Color { BLACK, WHITE }

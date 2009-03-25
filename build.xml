@@ -15,6 +15,9 @@
 	
 	<target name="build" depends="compile" description="build a release jar">
 		<jar destfile="pylos.jar">
+			<manifest>
+				<attribute name="Main-Class" value="pylos.scene.Scene" />
+			</manifest>
 			<fileset dir="${build.dir}" />
 		</jar>
 	</target>

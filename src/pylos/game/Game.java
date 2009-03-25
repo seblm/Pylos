@@ -1,12 +1,13 @@
 /*
  * Created on 12 mars 2005
  */
-package fr.lemerdy.pylos.game;
+package pylos.game;
 
 import java.util.Observable;
 import java.util.logging.Logger;
 
-import fr.lemerdy.pylos.scene.Scene;
+import pylos.scene.Scene;
+
 
 /**
  * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>

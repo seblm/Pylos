@@ -1,7 +1,7 @@
 /*
  * Created on 15 janv. 2005
  */
-package fr.lemerdy.pylos.scene;
+package pylos.scene;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -24,13 +24,14 @@ import javax.media.j3d.BoundingSphere;
 import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
+import pylos.game.Color;
+import pylos.game.Game;
+
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.universe.ConfiguredUniverse;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-import fr.lemerdy.pylos.game.Color;
-import fr.lemerdy.pylos.game.Game;
 
 /**
  * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>

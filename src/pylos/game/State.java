@@ -1,4 +1,4 @@
-package fr.lemerdy.pylos.game;
+package pylos.game;
 
 /**
  * CLASSIC waiting for player to put, move or quit. SPECIAL1 and SPECIAL waiting

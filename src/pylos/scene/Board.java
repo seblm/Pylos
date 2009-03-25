@@ -1,7 +1,7 @@
 /*
  * Created on 16 janv. 2005
  */
-package fr.lemerdy.pylos.scene;
+package pylos.scene;
 
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.TriangleFanArray;
