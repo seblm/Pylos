@@ -10,9 +10,11 @@ public class GameTest {
 
 	@Test
 	public void testGetCurrentColor() {
-		Game g = new GameImpl();
+		Game g = new Game();
 		Color currentColor = g.getCurrentColor();
 		try {
+			Column c = g.getColumn(-1, -3);
+			c.put();
 			g.put(-1, 3);
 			Assert
 					.assertFalse(
@@ -24,7 +26,7 @@ public class GameTest {
 
 	@Test
 	public void testMove() {
-		Game g = new GameImpl();
+		Game g = new Game();
 		// wrong coordinates
 		try {
 			g.put(6, -3);
@@ -91,12 +93,12 @@ public class GameTest {
 			Assert
 					.fail("put a ball on third level must not throw any Exception");
 		}
-		((GameImpl) g).printBoard();
+		((Game) g).printBoard();
 	}
 
 	@Test
 	public void testGame() {
-		Game g = new GameImpl();
+		Game g = new Game();
 		// WHITE
 		g.put(-3, -3);
 		// BLACK
@@ -129,7 +131,7 @@ public class GameTest {
 		} catch (IllegalStateException e) {
 		}
 		g.pass();
-		((GameImpl) g).printBoard();
+		g.printBoard();
 	}
 
 }

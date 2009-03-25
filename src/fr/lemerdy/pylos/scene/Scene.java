@@ -8,6 +8,9 @@ import java.awt.Frame;
 import java.awt.Panel;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Logger;
 
 import javax.media.j3d.Appearance;
@@ -26,14 +29,19 @@ import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.universe.ConfiguredUniverse;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
+import fr.lemerdy.pylos.game.Color;
+import fr.lemerdy.pylos.game.Game;
+
 /**
- * @author banou
+ * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>
  */
-public class Scene extends Frame implements WindowListener {
+public class Scene extends Frame implements WindowListener, Observer {
 	
 	private static final Logger logger = Logger.getLogger(Scene.class.getName());
 	
 	private static final long serialVersionUID = 1L;
+	
+	private Game game;
 	
 	private SimpleUniverse universe;
 	
@@ -44,19 +52,25 @@ public class Scene extends Frame implements WindowListener {
 	private final Appearance black;
 	
 	public Scene() {
-		// Creates awt properties
 		super("Pylos");
-		this.addWindowListener(this);
-		this.setLayout(new BorderLayout());
 		
+		game = new Game();
+		game.addObserver(this);
+		
+		setSize(260, 460);
+		setLocationRelativeTo(null);
+		addWindowListener(this);
+		setLayout(new BorderLayout());
+		
+		// Creates buttons controls
 		Panel p = new Panel();
-		BoardPanel buttons = new BoardPanel();
+		BoardPanel buttons = new BoardPanel(game);
 		p.add(buttons);
-		this.add(BorderLayout.SOUTH, p);
+		add(BorderLayout.SOUTH, p);
 		
 		// Settings
 		Canvas3D canvas3D = new Canvas3D(ConfiguredUniverse.getPreferredConfiguration());
-		this.add(BorderLayout.CENTER, canvas3D);
+		add(BorderLayout.CENTER, canvas3D);
 		
 		// Constructing scene
 		BranchGroup scene = new BranchGroup();
@@ -117,4 +131,19 @@ public class Scene extends Frame implements WindowListener {
 	public void windowClosed(WindowEvent windowEvent) { System.exit(0); }
 	public void windowDeactivated(WindowEvent windowEvent) {}
 
+	public static void main(String[] args) throws IOException {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+        	public void run() {
+                new Scene().setVisible(true);
+            }
+        });
+	}
+
+	public void update(Observable game, Object event) {
+		Object[] eventTab = (Object[]) event;
+		if ("put".equals(eventTab[0])) {
+			put(((Integer) eventTab[1]).intValue(), ((Integer) eventTab[2]).intValue(), ((Integer) eventTab[3]).intValue(), ((Game) game).getCurrentColor() == Color.WHITE);
+		}
+	}
+	
 }

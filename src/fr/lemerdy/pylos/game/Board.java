@@ -1,5 +1,7 @@
 package fr.lemerdy.pylos.game;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -13,11 +15,88 @@ public class Board {
 	private static final Logger logger = Logger
 			.getLogger(Board.class.getName());
 
+	/**
+	 * @deprecated
+	 */
 	private Color[][][] board;
-
-	public Board() {
-		board = new Color[][][] { new Color[4][4], new Color[3][3],
-				new Color[2][2], new Color[1][1] };
+	
+	private Column[][][] columns;
+	
+	public Board(final Game game) {
+		
+		board = new Color[][][] { new Color[4][4], new Color[3][3], new Color[2][2], new Color[1][1] };
+		BallPosition[][][] ballPositions = new BallPosition[7][7][4];
+		columns = new Column[][][] { new Column[4][4], new Column[3][3] };
+		Set<BallPosition> children;
+		
+		// creates BallPositions
+		for (int level = 0 ; level <= 3 ; level++) {
+			for (int x = -3 + level ; x <= 3 - level ; x += 2) {
+				for (int y = -3 + level ; y <= 3 - level ; y += 2) {
+					// translates x and y into array referential
+					final int X = x + 3;
+					final int Y = y + 3;
+					children = new HashSet<BallPosition>();
+					if (level > 0) {
+						try {
+							children.add(ballPositions[X - 1][Y - 1][level - 1]);
+						} catch (ArrayIndexOutOfBoundsException e) {}
+						try {
+							children.add(ballPositions[X - 1][Y + 1][level - 1]);
+						} catch (ArrayIndexOutOfBoundsException e) {}
+						try {
+							children.add(ballPositions[X + 1][Y - 1][level - 1]);
+						} catch (ArrayIndexOutOfBoundsException e) {}
+						try {
+							children.add(ballPositions[X + 1][Y + 1][level - 1]);
+						} catch (ArrayIndexOutOfBoundsException e) {}
+					}
+					ballPositions[X][Y][level] = new BallPosition(x, y, level, children);
+				}
+			}
+		}
+		
+		// add parents to each ballPosition
+		for (int level = 0 ; level <= 2 ; level++) {
+			for (int x = -3 + level ; x <= 3 - level ; x += 2) {
+				for (int y = -3 + level ; y <= 3 - level ; y += 2) {
+					// translates x and y into array referential
+					final int X = x + 3;
+					final int Y = y + 3;
+					final BallPosition currentBallPosition = ballPositions[X][Y][level];
+					for (BallPosition child : currentBallPosition.getChildren()) {
+						child.addParent(currentBallPosition);
+					}
+				}
+			}
+		}
+		
+		// creates columns
+		for (int x = -3 ; x <= 3 ; x++) {
+			for (int y = -3 ; y <= 3 ; y++) {
+				if (Math.abs(x) % 2 == Math.abs(y) % 2) {
+					// translates x and y into BallPosition's array referential
+					final int X = x + 3;
+					final int Y = y + 3;
+					// find BallPositions
+					if (Math.abs(x) > 1 || Math.abs(y) > 1) {
+						// current column have only one BallPosition
+						columns[(Math.abs(x) + 1) % 2][X / 2][Y / 2] = new Column(new BallPosition[] { ballPositions[X][Y][(Math.abs(x) + 1) % 2] }, game);
+					} else {
+						// current column have two BallPositions
+						columns[(Math.abs(x) + 1) % 2][X / 2][Y / 2] = new Column(new BallPosition[] { ballPositions[X][Y][(Math.abs(x) + 1) % 2], ballPositions[X][Y][(Math.abs(x) + 1) % 2 + 2] }, game);
+					}
+				}
+			}
+		}
+	}
+	
+	public Column getColumn(final int x, final int y) {
+		try {
+			return columns[(Math.abs(x) + 1) % 2][(x + 3) / 2][(y + 3) / 2];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new IllegalArgumentException("invalid coordinates");
+		}
 	}
 
 	protected void validateCoordinates(final int x, final int y) {
