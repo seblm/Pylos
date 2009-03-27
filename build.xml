@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="pylos" default="build">
 	
-	<property name="src.dir"   value="src"/>
-	<property name="build.dir" value="bin"/>
+	<property name="src.dir"   value="src" />
+	<property name="conf.dir"  value="conf" />
+	<property name="build.dir" value="bin" />
 	
 	<target name="clean" description="deletes output directories">
 		<delete includeEmptyDirs="true" dir="${build.dir}" />
@@ -13,7 +14,13 @@
 		<javac srcdir="${src.dir}" destdir="${build.dir}" />
 	</target>
 	
-	<target name="build" depends="compile" description="build a release jar">
+	<target name="addConfiguration" depends="clean" description="copy configuration files to output directory">
+		<copy todir="${build.dir}">
+			<fileset dir="${conf.dir}" />
+		</copy>
+	</target>
+	
+	<target name="build" depends="compile, addConfiguration" description="build a release jar">
 		<jar destfile="pylos.jar">
 			<manifest>
 				<attribute name="Main-Class" value="pylos.scene.Scene" />

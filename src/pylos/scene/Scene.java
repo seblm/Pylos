@@ -9,8 +9,10 @@ import java.awt.Panel;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.media.j3d.Appearance;
@@ -38,7 +40,18 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
  */
 public class Scene extends Frame implements WindowListener, Observer {
 	
-	private static final Logger logger = Logger.getLogger(Scene.class.getName());
+	static {
+		// configure logging from configuration file
+		InputStream logging = Scene.class.getResourceAsStream("/logging.properties");
+		try {
+			LogManager.getLogManager().readConfiguration(logging);
+		} catch (SecurityException e) {
+		} catch (IOException e) {
+		}
+		logger = Logger.getLogger(Scene.class.getName());
+	}
+	
+	private static final Logger logger;
 	
 	private static final long serialVersionUID = 1L;
 	
