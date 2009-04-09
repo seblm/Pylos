@@ -6,34 +6,81 @@ package pylos.game;
 import java.util.Observable;
 import java.util.logging.Logger;
 
-import pylos.scene.Scene;
-
-
 /**
  * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>
  */
 public class Game extends Observable {
 
-	private static final Logger logger = Logger
-			.getLogger(Scene.class.getName());
+	private static final Logger logger = Logger.getLogger(Game.class.getName());
 
 	private Color currentColor;
 
-	private Board board;
-
 	private State currentState;
+	
+	private Column[][] columns;
+	
+	private BallPosition[][][] ballPositions;
 
 	/**
 	 * Default constructor.
 	 */
 	public Game() {
 		currentColor = Color.WHITE;
-		board = new Board(this);
 		currentState = State.CLASSIC;
+		columns = new Column[7][7];
+		
+		ballPositions = new BallPosition[7][7][4];
+		
+		// creates ball positions
+		for (int level = 0 ; level <= 3 ; level++) {
+			for (int x = -3 + level ; x <= 3 - level ; x += 2) {
+				for (int y = -3 + level ; y <= 3 - level ; y += 2) {
+					ballPositions[x + 3][y + 3][level] = new BallPosition(x, y, level);
+				}
+			}
+		}
+		
+		// creates columns
+		for (int x = -3 ; x <= 3 ; x++) {
+			for (int y = -3 ; y <= 3 ; y++) {
+				if (Math.abs(x) % 2 == Math.abs(y) % 2) {
+					// translates x and y into BallPosition's array referential
+					final int X = x + 3;
+					final int Y = y + 3;
+					// find BallPositions
+					if (Math.abs(x) > 1 || Math.abs(y) > 1) {
+						// current column have only one BallPosition
+						columns[X][Y] = new Column(new BallPosition[] { ballPositions[X][Y][(Math.abs(x) + 1) % 2] });
+					} else {
+						// current column have two BallPositions
+						columns[X][Y] = new Column(new BallPosition[] { ballPositions[X][Y][(Math.abs(x) + 1) % 2], ballPositions[X][Y][(Math.abs(x) + 1) % 2 + 2] });
+					}
+				}
+			}
+		}
+		
+		// creates squares
+		for (int level = 1 ; level <= 3 ; level++) {
+			for (int x = -3 + level ; x <= 3 - level ; x += 2) {
+				for (int y = -3 + level ; y <= 3 - level ; y += 2) {
+					if (Math.abs(x) % 2 == Math.abs(y) % 2) {
+						// translates x and y into BallPosition's array referential
+						final int X = x + 3;
+						final int Y = y + 3;
+						new Square(new BallPosition[] {
+							ballPositions[X - 1][Y - 1][level - 1],
+							ballPositions[X - 1][Y + 1][level - 1],
+							ballPositions[X + 1][Y - 1][level - 1],
+							ballPositions[X + 1][Y + 1][level - 1]
+						}, columns[X][Y], this);
+					}
+				}
+			}
+		}
 	}
-
-	public Color getCurrentColor() {
-		return currentColor;
+	
+	protected void specialMove() {
+		currentState = State.SPECIAL1;
 	}
 
 	private void switchColor() {
@@ -43,6 +90,22 @@ public class Game extends Observable {
 			currentColor = Color.WHITE;
 		}
 		currentState = State.CLASSIC;
+	}
+	
+	public Column getColumn(final int x, final int y) {
+		try {
+			return columns[x + 3][y + 3];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new IllegalArgumentException("invalid coordinates");
+		}
+	}
+	
+	public BallPosition getBallPosition(final int x, final int y, final int z) {
+		try {
+			return ballPositions[x + 3][y + 3][z];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new IllegalArgumentException("invalid coordinates");
+		}
 	}
 
 	protected void printBoard() {
@@ -61,8 +124,8 @@ public class Game extends Observable {
 			}
 			System.out.print(y + " ");
 			for (int x = -3; x <= 3; x++) {
-				try {
-					color = get(x, y);
+				if (Math.abs(x) % 2 == Math.abs(y) % 2) {
+					color = columns[x+3][y+3].getColor();
 					if (Color.WHITE.equals(color)) {
 						System.out.print("O ");
 					} else if (Color.BLACK.equals(color)) {
@@ -70,7 +133,7 @@ public class Game extends Observable {
 					} else {
 						System.out.print(". ");
 					}
-				} catch (IllegalArgumentException e) {
+				} else {
 					System.out.print("  ");
 				}
 			}
@@ -87,23 +150,6 @@ public class Game extends Observable {
 			System.out.print(y);
 		}
 		System.out.println();
-	}
-
-	private Color get(final int x, final int y) {
-		board.validateCoordinates(x, y);
-		return get(x, y, 3 - Math.min(3, (int) (Math.hypot(x, y))));
-	}
-	
-	public Column getColumn(final int x, final int y) {
-		return board.getColumn(x, y);
-	}
-
-	private Color get(final int x, final int y, final int level) {
-		if (board.get(x, y, level) == null && level > 1) {
-			return get(x, y, level - 2);
-		} else {
-			return board.get(x, y, level);
-		}
 	}
 
 	/**
@@ -126,203 +172,60 @@ public class Game extends Observable {
 	 *            abscissa
 	 * @param y
 	 *            ordinate
-	 * @return level of the ball that has just be added to board
 	 * @throws IllegalArgumentException
-	 *             threw if coordinates are wrong or if board position denoted
+	 *             threw if coordinates are wrongs or if ball position denoted
 	 *             by them is filled with the maximum of balls that it can
 	 *             handle
 	 * @throws IllegalStateException
 	 *             threw if current state doesn't permit to put a ball
 	 */
-	public int put(final int x, final int y) throws IllegalStateException,
+	public void put(final int x, final int y) throws IllegalStateException,
 			IllegalArgumentException {
-		logger
-				.entering(this.getClass().getName(), "put",
-						new Object[] { x, y });
+		logger.entering(this.getClass().getName(), "put", new Object[] { x, y });
 		if (currentState != State.CLASSIC) {
-			throw new IllegalStateException(
-					"can't put a new ball : have to pass or remove ball");
+			throw new IllegalStateException("can't put a new ball : have to pass or remove ball");
 		}
-		int level = board.put(x, y, currentColor);
-		if (board.hasSquare(x, y, level, currentColor)
-				|| board.hasLine(x, y, level, currentColor)) {
-			currentState = State.SPECIAL1;
-		} else {
+		getColumn(x, y).put(currentColor);
+		if (currentState == State.CLASSIC) {
 			switchColor();
 		}
-		setChanged();
-		notifyObservers(new Object[] {"put", x, y, level, currentColor});
-		return level;
+	}
+	
+	public void put(final Column column) {
+		put(column.getX(), column.getY());
 	}
 
 	public void remove(int x, int y) {
 		if (currentState == State.CLASSIC) {
-			throw new IllegalStateException(
-					"can't remove a ball : have to make square or lines in order to");
+			throw new IllegalStateException("can't remove a ball : have to make square or lines in order to");
 		}
-		board.validateCoordinates(x, y);
-		remove(x, y, 3 - Math.min(3, (int) (Math.hypot(x, y))));
-	}
-
-	private void remove(final int x, final int y, final int level) {
-		if (board.get(x, y, level) == null && level > 1) {
-			remove(x, y, level - 2);
+		getColumn(x, y).remove(currentColor);
+		if (currentState.equals(State.SPECIAL2)) {
+			switchColor();
 		} else {
-			if (currentColor.equals(board.get(x, y, level))) {
-				board.set(x, y, level, null);
-				if (currentState.equals(State.SPECIAL1)) {
-					currentState = State.CLASSIC;
-					switchColor();
-				} else {
-					currentState = State.SPECIAL2;
-				}
-			} else {
-				throw new IllegalArgumentException(
-						"can't remove a ball that don't belongs to currentColor");
-			}
+			currentState = State.SPECIAL2;
 		}
 	}
 
 	public void pass() {
 		if (currentState.equals(State.CLASSIC)) {
-			throw new IllegalArgumentException(
-					"can't pass : have to put a ball");
-		} else {
-			currentState = State.CLASSIC;
+			throw new IllegalArgumentException("can't pass : have to put a ball");
+		}
+		switchColor();
+	}
+
+	public void move(int xFrom, int yFrom, int xTo, int yTo) {
+		if (!currentState.equals(State.CLASSIC)) {
+			throw new IllegalArgumentException("can't move : have to pass or remove a ball");
+		}
+		int levelFrom = getColumn(xFrom, yFrom).remove(currentColor);
+		int levelTo = getColumn(xTo, yTo).put(currentColor);
+		if (levelTo <= levelFrom) {
+			columns[xFrom+3][yFrom+3].put(currentColor);
+			columns[xTo+3][yTo+3].remove(currentColor);
+		}
+		if (currentState == State.CLASSIC) {
 			switchColor();
 		}
 	}
-
-	public int[] move(int xFrom, int yFrom, int xTo, int yTo) {
-		if (!currentState.equals(State.CLASSIC)) {
-			throw new IllegalArgumentException(
-					"can't move : have to pass or remove a ball");
-		}
-		board.validateCoordinates(xFrom, yFrom);
-		board.validateCoordinates(xTo, yTo);
-		int level = 3 - Math.min(3, (int) (Math.hypot(xFrom, yFrom)));
-		int levelTo = 3 - Math.min(3, (int) (Math.hypot(xTo, yTo)));
-		if (board.get(xFrom, yFrom, level) == null) {
-			throw new IllegalArgumentException(
-					"can't move : there is no ball to move from");
-		}
-		if (!currentColor.equals(board.get(xFrom, yFrom, level))) {
-			throw new IllegalArgumentException(
-					"can't move : ball don't belongs to current color");
-		}
-		if (board.get(xTo, yTo, levelTo) != null) {
-			throw new IllegalArgumentException(
-					"can't move : there is already a ball to destination's move");
-		}
-		// goal : validate that the ball identified by (xFrom, yFrom) don't have
-		// any ball on it
-		boolean freeToMove = true;
-		board.validateCoordinates(xFrom - 1, yFrom - 1);
-		try {
-			freeToMove &= board.get(xFrom - 1, yFrom - 1, level + 1) == null;
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(
-					"can't move : there is(are) ball(s) on it");
-		}
-		board.validateCoordinates(xFrom + 1, yFrom - 1);
-		try {
-			freeToMove &= board.get(xFrom + 1, yFrom - 1, level + 1) == null;
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(
-					"can't move : there is(are) ball(s) on it");
-		}
-		board.validateCoordinates(xFrom + 1, yFrom + 1);
-		try {
-			freeToMove &= board.get(xFrom + 1, yFrom + 1, level + 1) == null;
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(
-					"can't move : there is(are) ball(s) on it");
-		}
-		board.validateCoordinates(xFrom - 1, yFrom + 1);
-		try {
-			freeToMove &= board.get(xFrom - 1, yFrom + 1, level + 1) == null;
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(
-					"can't move : there is(are) ball(s) on it");
-		}
-		// TODO add levelTo between xTo and yTo when implemented into board
-		// Class
-		board.put(xTo, yTo, currentColor);
-		board.set(xFrom, yFrom, level, null);
-		return new int[] { level, levelTo };
-	}
-/*
-		String command = null;
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		while (!"quit".equals(command)) {
-			((GameImpl) g).printBoard();
-			System.out.print(g.getCurrentColor() + "> ");
-			command = in.readLine();
-			if ("put".equals(command)) {
-				try {
-					System.out.print("x> ");
-					command = in.readLine();
-					int x = Integer.parseInt(command);
-					System.out.print("y> ");
-					command = in.readLine();
-					int y = Integer.parseInt(command);
-					try {
-						Color currentColor = g.getCurrentColor();
-						final int level = g.put(x, y);
-						scene.put(x, y, level, currentColor == Color.WHITE);
-					} catch (Exception e) {
-						System.err.println(e.getMessage());
-					}
-				} catch (NumberFormatException e) {
-					System.err.println(e.getMessage());
-				}
-			} else if ("move".equals(command)) {
-				try {
-					System.out.print("xFrom> ");
-					command = in.readLine();
-					int xFrom = Integer.parseInt(command);
-					System.out.print("yFrom> ");
-					command = in.readLine();
-					int yFrom = Integer.parseInt(command);
-					System.out.print("xTo> ");
-					command = in.readLine();
-					int xTo = Integer.parseInt(command);
-					System.out.print("yTo> ");
-					command = in.readLine();
-					int yTo = Integer.parseInt(command);
-					try {
-						int levels[] = g.move(xFrom, yFrom, xTo, yTo);
-						scene.put(xTo, yTo, levels[1],
-								g.getCurrentColor() == Color.BLACK);
-						// scene.remove(xFrom, yFrom, levels[0]);
-					} catch (Exception e) {
-						System.err.println(e.getMessage());
-					}
-				} catch (NumberFormatException e) {
-					System.err.println(e.getMessage());
-				}
-			} else if ("pass".equals(command)) {
-				try {
-					g.pass();
-				} catch (Exception e) {
-					System.err.println(e.getMessage());
-				}
-			} else if ("remove".equals(command)) {
-				System.out.print("x> ");
-				command = in.readLine();
-				int x = Integer.parseInt(command);
-				System.out.print("y> ");
-				command = in.readLine();
-				int y = Integer.parseInt(command);
-				try {
-					g.remove(x, y);
-				} catch (Exception e) {
-					System.err.println(e.getMessage());
-				}
-			}
-		}
-		in.close();
-		scene.dispose();
-	}
-*/
 }

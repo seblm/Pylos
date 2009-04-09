@@ -1,30 +1,25 @@
 package pylos.game;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import pylos.game.Color;
-import pylos.game.Column;
 import pylos.game.Game;
 
 /**
  * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>
  */
 public class GameTest {
-
-	@Test
-	public void testGetCurrentColor() {
-		Game g = new Game();
-		Color currentColor = g.getCurrentColor();
+	
+	static {
+		InputStream logging = GameTest.class.getResourceAsStream("/logging.properties");
 		try {
-			Column c = g.getColumn(-1, -3);
-			c.put();
-			g.put(-1, 3);
-			Assert
-					.assertFalse(
-							"currentColor has to be switched when an action was correct",
-							currentColor.equals(g.getCurrentColor()));
-		} catch (Exception e) {
+			LogManager.getLogManager().readConfiguration(logging);
+		} catch (SecurityException e) {
+		} catch (IOException e) {
 		}
 	}
 
@@ -37,8 +32,7 @@ public class GameTest {
 			Assert.fail("wrong coordinates");
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
-			Assert
-					.fail("wrong coordinates must throw an IllegalArgumentException");
+			Assert.fail("wrong coordinates must throw an IllegalArgumentException");
 		}
 		// good coordinates
 		try {
@@ -52,8 +46,7 @@ public class GameTest {
 			Assert.fail("place already in use");
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
-			Assert
-					.fail("place already in use must throw an IllegalArgumentException");
+			Assert.fail("place already in use must throw an IllegalArgumentException");
 		}
 		// put a ball on invalid level
 		try {
@@ -71,16 +64,14 @@ public class GameTest {
 			Assert.fail("ball can't be stand on only 3 balls under");
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
-			Assert
-					.fail("put a ball on instable place must throw an IllegalArgumentException");
+			Assert.fail("put a ball on instable place must throw an IllegalArgumentException");
 		}
 		// put a ball on second level
 		g.put(-1, -3);
 		try {
 			g.put(-2, -2);
 		} catch (Exception e) {
-			Assert
-					.fail("put a ball on second level must not throw any Exception");
+			Assert.fail("put a ball on second level must not throw any Exception");
 		}
 		// put a ball on third level
 		g.put(1, -3);
@@ -94,10 +85,9 @@ public class GameTest {
 		try {
 			g.put(-1, -1);
 		} catch (Exception e) {
-			Assert
-					.fail("put a ball on third level must not throw any Exception");
+			Assert.fail("put a ball on third level must not throw any Exception");
 		}
-		((Game) g).printBoard();
+		g.printBoard();
 	}
 
 	@Test
@@ -118,20 +108,18 @@ public class GameTest {
 		// WHITE
 		g.put(-3, -1);
 		try {
-			g.put(1, -3);
-			Assert
-					.fail("after square legal moves are only one remove and pass or two removes");
+			g.put(1, 3);
+			Assert.fail("after square legal moves are only one remove and pass or two removes");
 		} catch (IllegalStateException e) {
 		}
 		try {
 			g.remove(3, 1);
 			Assert.fail("can't remove a ball that is not belong to himself");
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalStateException e) {
 		}
 		try {
 			g.put(-3, 1);
-			Assert
-					.fail("after square and a remove legal moves are only one remove or pass");
+			Assert.fail("after square and a remove legal moves are only one remove or pass");
 		} catch (IllegalStateException e) {
 		}
 		g.pass();

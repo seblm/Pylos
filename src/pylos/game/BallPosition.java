@@ -1,9 +1,10 @@
 package pylos.game;
 
 import java.util.HashSet;
+import java.util.Observable;
 import java.util.Set;
 
-public class BallPosition {
+public class BallPosition extends Observable {
 	
 	private int x;
 	
@@ -13,13 +14,11 @@ public class BallPosition {
 	
 	private Column column;
 	
-	private Set<BallPosition> children;
-	
-	private Set<BallPosition> parents;
+	private Set<Square> squares;
 	
 	private Color color;
 	
-	protected BallPosition(final int x, final int y, final int z, Set<BallPosition> children) {
+	protected BallPosition(final int x, final int y, final int z) {
 		if (Math.abs(x) % 2 != Math.abs(y) % 2) {
 			throw new IllegalArgumentException("x have to be the same parity than y");
 		}
@@ -32,21 +31,16 @@ public class BallPosition {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.children = children;
-		this.parents = new HashSet<BallPosition>();
 		this.color = null;
+		this.squares = new HashSet<Square>();
 	}
 	
 	protected boolean hasPairCoordinates() {
 		return x % 2 == 0;
 	}
 	
-	protected void addParent(BallPosition parent) {
-		parents.add(parent);
-	}
-	
-	protected Set<BallPosition> getChildren() {
-		return children;
+	protected void addSquare(final Square square) {
+		squares.add(square);
 	}
 	
 	protected void setColumn(final Column column) {
@@ -54,6 +48,18 @@ public class BallPosition {
 			throw new IllegalStateException("column " + column + " is already set");
 		}
 		this.column = column;
+	}
+	
+	protected int getX() {
+		return x;
+	}
+	
+	protected int getY() {
+		return y;
+	}
+	
+	protected int getZ() {
+		return z;
 	}
 
 	@Override
@@ -68,22 +74,34 @@ public class BallPosition {
 		return toString.toString();
 	}
 	
-	protected void put(final Color color) {
-		this.color = color;
-		for (BallPosition parent : parents) {
-			parent.checkChildren();
+	protected int put(final Color color) {
+		if (this.color != null) {
+			throw new IllegalStateException("can't put a ball because this place is already filled");
 		}
+		this.color = color;
+		setChanged();
+		notifyObservers();
+		for (Square square : squares) {
+			square.ballAdded();
+		}
+		return z;
 	}
 	
-	protected void checkChildren() {
-		// One of children has changed : have to check if our column can accept ball
-		boolean canAcceptBalls = true;
-		for (BallPosition child : children) {
-			canAcceptBalls &= child.color != null;
+	protected int remove(final Color color) {
+		if (!color.equals(this.color)) {
+			throw new IllegalStateException("can't remove a ball that don't belongs to the current color");
 		}
-		if (canAcceptBalls) {
-			column.setCanAcceptBall();
+		this.color = null;
+		setChanged();
+		notifyObservers();
+		for (Square square : squares) {
+			square.ballRemoved();
 		}
+		return z;
+	}
+	
+	public Color getColor() {
+		return color;
 	}
 	
 }

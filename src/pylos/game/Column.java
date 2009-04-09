@@ -4,43 +4,89 @@ import java.util.Observable;
 
 public class Column extends Observable {
 	
-	private int currentLevel;
+	private int colorPosition;
+	
+	private int emptyPosition;
 	
 	private boolean canAcceptBall;
 	
-	private boolean filled;
-	
-	private Game game;
+	private boolean canRemoveBall;
 	
 	private BallPosition[] ballPositions;
 	
-	protected Column(final BallPosition[] ballPositions, final Game game) {
+	protected Column(final BallPosition[] ballPositions) {
 		this.ballPositions = ballPositions;
-		this.game = game;
-		currentLevel = 0;
-		canAcceptBall = ballPositions[0].hasPairCoordinates();
+		colorPosition = -1;
+		emptyPosition = 0;
+		canAcceptBall = !ballPositions[emptyPosition].hasPairCoordinates();
+		canRemoveBall = false;
+		for (BallPosition ballPosition : ballPositions) {
+			ballPosition.setColumn(this);
+		}
 	}
 	
-	public void put() {
+	public Color getColor() {
+		try {
+			return ballPositions[colorPosition].getColor();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+	
+	protected int getX() {
+		return ballPositions[0].getX();
+	}
+	
+	protected int getY() {
+		return ballPositions[0].getY();
+	}
+	
+	public boolean isCanAcceptBall() {
+		return canAcceptBall;
+	}
+	
+	public boolean isCanRemoveBall() {
+		return canRemoveBall;
+	}
+	
+	public int put(final Color color) {
 		if (!canAcceptBall) {
 			throw new IllegalArgumentException("this column cannot accept balls");
 		}
-		if (filled) {
-			throw new IllegalArgumentException("this column is already filled");
-		}
-		ballPositions[currentLevel].put(game.getCurrentColor());
-		currentLevel++;
+		int level = ballPositions[emptyPosition].put(color);
 		canAcceptBall = false;
-		filled = currentLevel == ballPositions.length;
+		canRemoveBall = true;
+		colorPosition++;
+		emptyPosition++;
 		setChanged();
 		notifyObservers();
+		return level;
+	}
+	
+	public int remove(final Color color) {
+		if (!canRemoveBall) {
+			throw new IllegalStateException("this column cannot remove ball");
+		}
+		int level = ballPositions[colorPosition].remove(color);
+		colorPosition--;
+		emptyPosition--;
+		setChanged();
+		notifyObservers();
+		return level;
 	}
 	
 	protected void setCanAcceptBall() {
-		// a foreign ballPosition said that this column can accept balls
-		canAcceptBall = true;
-		setChanged();
-		notifyObservers();
+		if (colorPosition < ballPositions.length) {
+			// column is not filled
+			canAcceptBall = true;
+			setChanged();
+			notifyObservers();
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return "Column(" + ballPositions[0].getX() + ", " + ballPositions[0].getY() + ")";
 	}
 
 }
