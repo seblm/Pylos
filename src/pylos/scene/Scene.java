@@ -12,23 +12,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;
 
+import javax.media.j3d.Alpha;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.RotationInterpolator;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.BoundingSphere;
 import javax.vecmath.Color3f;
 
 import pylos.game.Game;
 
-import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.universe.ConfiguredUniverse;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 /**
  * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>
  */
-public class Scene extends Frame implements WindowListener {
+public class Scene extends Frame {
 	
 	static {
 		// configure logging from configuration file
@@ -53,7 +54,15 @@ public class Scene extends Frame implements WindowListener {
 		
 		setSize(260, 460);
 		setLocationRelativeTo(null);
-		addWindowListener(this);
+		addWindowListener(new WindowListener() {
+			public void windowIconified(WindowEvent windowEvent) {}
+			public void windowDeiconified(WindowEvent windowEvent) {}
+			public void windowClosing(WindowEvent windowEvent) { System.exit(0); }
+			public void windowOpened(WindowEvent windowEvent) {}
+			public void windowActivated(WindowEvent windowEvent) {}
+			public void windowClosed(WindowEvent windowEvent) { System.exit(0); }
+			public void windowDeactivated(WindowEvent windowEvent) {}
+		});
 		setLayout(new BorderLayout());
 		
 		// Creates buttons controls
@@ -82,10 +91,19 @@ public class Scene extends Frame implements WindowListener {
 		// Add capability for user to move scene
 		transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-		MouseRotate mouseRotate = new MouseRotate();
-		mouseRotate.setTransformGroup(transformGroup);
-		transformGroup.addChild(mouseRotate);
-		mouseRotate.setSchedulingBounds(new BoundingSphere());
+//		MouseRotate mouseRotate = new MouseRotate();
+//		mouseRotate.setTransformGroup(transformGroup);
+//		transformGroup.addChild(mouseRotate);
+//		mouseRotate.setSchedulingBounds(new BoundingSphere());
+		final Alpha alpha = new Alpha(1, 0, 0, 500, 250, 0);
+		final RotationInterpolator rotationInterpolator = new BoardRotationInterpolator(alpha, transformGroup);
+		transformGroup.addChild(rotationInterpolator);
+		rotationInterpolator.setSchedulingBounds(new BoundingSphere());
+		final Alpha alpha2 = new Alpha(1, 0, 0, 500, 250, 0);
+		final RotationInterpolator rotationInterpolator2 = new VerticalBoardRotationInterpolator(alpha2, transformGroup);
+		transformGroup.addChild(rotationInterpolator2);
+		rotationInterpolator2.setSchedulingBounds(new BoundingSphere());
+
 		scene.addChild(transformGroup);
 		
 		// Creates light
@@ -100,14 +118,6 @@ public class Scene extends Frame implements WindowListener {
 		universe.addBranchGraph(scene);
 	}
 	
-	public void windowIconified(WindowEvent windowEvent) {}
-	public void windowDeiconified(WindowEvent windowEvent) {}
-	public void windowClosing(WindowEvent windowEvent) { System.exit(0); }
-	public void windowOpened(WindowEvent windowEvent) {}
-	public void windowActivated(WindowEvent windowEvent) {}
-	public void windowClosed(WindowEvent windowEvent) { System.exit(0); }
-	public void windowDeactivated(WindowEvent windowEvent) {}
-
 	public static void main(String[] args) throws IOException {
         java.awt.EventQueue.invokeLater(new Runnable() {
         	public void run() {
