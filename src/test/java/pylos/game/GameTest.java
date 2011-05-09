@@ -87,7 +87,6 @@ public class GameTest {
 		} catch (Exception e) {
 			Assert.fail("put a ball on third level must not throw any Exception");
 		}
-		g.printBoard();
 	}
 
 	@Test
@@ -123,7 +122,6 @@ public class GameTest {
 		} catch (IllegalStateException e) {
 		}
 		g.pass();
-		g.printBoard();
 	}
 
 }
