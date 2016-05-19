@@ -1,21 +1,33 @@
 package pylos.game;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+
 public class GameTest {
-	
+
+	private Game game;
+
+	@Before
+	public void createGame() {
+		game = new Game();
+	}
+
+	@Test
+	public void should_not_put_a_ball_with_invalid_coordinates() {
+		Throwable throwable = catchThrowable(() -> game.put(6, -3));
+
+		assertThat(throwable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("invalid coordinates");
+	}
+
 	@Test
 	public void testMove() {
-		Game g = new Game();
-		// wrong coordinates
-		try {
-			g.put(6, -3);
-			Assert.fail("wrong coordinates");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			Assert.fail("wrong coordinates must throw an IllegalArgumentException");
-		}
+		Game g = game;
 		// good coordinates
 		try {
 			g.put(-3, -3);
@@ -73,7 +85,7 @@ public class GameTest {
 
 	@Test
 	public void testGame() {
-		Game g = new Game();
+		Game g = game;
 		// WHITE
 		g.put(-3, -3);
 		// BLACK
