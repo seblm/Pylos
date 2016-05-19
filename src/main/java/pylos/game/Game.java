@@ -206,6 +206,20 @@ public class Game {
         }
     }
 
+    boolean over() {
+        for (int level = 0; level <= 3; level++) {
+            for (int x = -3 + level; x <= 3 - level; x += 2) {
+                for (int y = -3 + level; y <= 3 - level; y += 2) {
+                    if (ballPositions[x + 3][y + 3][level].getColor() == null) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) {
         new Game().printBoard();
     }
