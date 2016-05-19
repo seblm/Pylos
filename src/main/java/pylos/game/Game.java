@@ -1,8 +1,6 @@
 package pylos.game;
 
-import java.util.Observable;
-
-public class Game extends Observable {
+public class Game {
 
 	private Color currentColor;
 

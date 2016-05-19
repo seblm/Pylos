@@ -1,8 +1,6 @@
 package pylos.game;
 
-import java.util.Observable;
-
-public class Column extends Observable {
+public class Column {
 	
 	private int colorPosition;
 	
@@ -58,8 +56,6 @@ public class Column extends Observable {
 		canRemoveBall = true;
 		colorPosition++;
 		emptyPosition++;
-		setChanged();
-		notifyObservers();
 		return level;
 	}
 	
@@ -70,8 +66,6 @@ public class Column extends Observable {
 		int level = ballPositions[colorPosition].remove(color);
 		colorPosition--;
 		emptyPosition--;
-		setChanged();
-		notifyObservers();
 		return level;
 	}
 	
@@ -79,8 +73,6 @@ public class Column extends Observable {
 		if (colorPosition < ballPositions.length) {
 			// column is not filled
 			canAcceptBall = true;
-			setChanged();
-			notifyObservers();
 		}
 	}
 	

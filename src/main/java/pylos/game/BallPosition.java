@@ -1,10 +1,9 @@
 package pylos.game;
 
 import java.util.HashSet;
-import java.util.Observable;
 import java.util.Set;
 
-public class BallPosition extends Observable {
+public class BallPosition {
 	
 	private int x;
 	
@@ -79,8 +78,6 @@ public class BallPosition extends Observable {
 			throw new IllegalStateException("can't put a ball because this place is already filled");
 		}
 		this.color = color;
-		setChanged();
-		notifyObservers();
 		for (Square square : squares) {
 			square.ballAdded();
 		}
@@ -92,8 +89,6 @@ public class BallPosition extends Observable {
 			throw new IllegalStateException("can't remove a ball that don't belongs to the current color");
 		}
 		this.color = null;
-		setChanged();
-		notifyObservers();
 		for (Square square : squares) {
 			square.ballRemoved();
 		}
