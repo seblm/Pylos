@@ -26,30 +26,52 @@ public class GameTest {
 	}
 
 	@Test
-	public void testMove() {
+	public void should_put_a_ball_with_valid_coordinates() {
+		game.put(-3, -3);
+
+		assertThat(game.getBallPosition(-3, -3, 0).getColor()).isNotNull();
+	}
+
+	@Test
+	public void should_not_put_a_ball_on_an_occupied_column() {
+		game.put(-3, -3);
+
+		Throwable throwable = catchThrowable(() -> game.put(-3, -3));
+
+		assertThat(throwable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("this column cannot accept balls");
+	}
+
+	@Test
+	public void should_not_put_a_ball_on_an_invalid_level() {
+		Throwable throwable = catchThrowable(() -> game.put(-2, -2));
+
+		assertThat(throwable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("this column cannot accept balls");
+	}
+
+	@Test
+	public void should_not_put_a_ball_on_an_instable_place() {
 		Game g = game;
-		// good coordinates
-		try {
-			g.put(-3, -3);
-		} catch (Exception e) {
-			Assert.fail("good coordinates must not throw any Exception");
-		}
-		// place already in use
-		try {
-			g.put(-3, -3);
-			Assert.fail("place already in use");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			Assert.fail("place already in use must throw an IllegalArgumentException");
-		}
-		// put a ball on invalid level
+		g.put(-3, -3);
+		// put a ball on instable place
+		g.put(-3, -1);
+		g.put(-1, -1);
 		try {
 			g.put(-2, -2);
-			Assert.fail("invalid level");
+			Assert.fail("ball can't be stand on only 3 balls under");
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {
-			Assert.fail("invalid level must not throw any Exception");
+			Assert.fail("put a ball on instable place must throw an IllegalArgumentException");
 		}
+	}
+
+	@Test
+	public void testMove() {
+		Game g = game;
+		g.put(-3, -3);
 		// put a ball on instable place
 		g.put(-3, -1);
 		g.put(-1, -1);
