@@ -54,55 +54,48 @@ public class GameTest {
 
 	@Test
 	public void should_not_put_a_ball_on_an_instable_place() {
-		Game g = game;
-		g.put(-3, -3);
-		// put a ball on instable place
-		g.put(-3, -1);
-		g.put(-1, -1);
-		try {
-			g.put(-2, -2);
-			Assert.fail("ball can't be stand on only 3 balls under");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			Assert.fail("put a ball on instable place must throw an IllegalArgumentException");
-		}
+		game.put(-3, -3);
+		game.put(-3, -1);
+		game.put(-1, -1);
+
+		Throwable throwable = catchThrowable(() -> game.put(-2, -2));
+
+		assertThat(throwable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("this column cannot accept balls");
 	}
 
 	@Test
-	public void testMove() {
-		Game g = game;
-		g.put(-3, -3);
-		// put a ball on instable place
-		g.put(-3, -1);
-		g.put(-1, -1);
-		try {
-			g.put(-2, -2);
-			Assert.fail("ball can't be stand on only 3 balls under");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			Assert.fail("put a ball on instable place must throw an IllegalArgumentException");
-		}
-		// put a ball on second level
-		g.put(-1, -3);
-		try {
-			g.put(-2, -2);
-		} catch (Exception e) {
-			Assert.fail("put a ball on second level must not throw any Exception");
-		}
-		// put a ball on third level
-		g.put(1, -3);
-		g.put(1, -1);
-		g.put(1, 1);
-		g.put(-1, 1);
-		g.put(-3, 1);
-		g.put(0, -2);
-		g.put(0, 0);
-		g.put(-2, 0);
-		try {
-			g.put(-1, -1);
-		} catch (Exception e) {
-			Assert.fail("put a ball on third level must not throw any Exception");
-		}
+	public void should_put_a_ball_on_the_second_level() {
+		game.put(-3, -3);
+		game.put(-3, -1);
+		game.put(-1, -1);
+		game.put(-1, -3);
+
+		game.put(-2, -2);
+
+		assertThat(game.getBallPosition(-2, -2, 1).getColor()).isNotNull();
+	}
+
+	@Test
+	public void should_put_a_ball_on_the_third_level() {
+		game.put(-3, -3);
+		game.put(-3, -1);
+		game.put(-1, -1);
+		game.put(-1, -3);
+		game.put(-2, -2);
+		game.put(1, -3);
+		game.put(1, -1);
+		game.put(1, 1);
+		game.put(-1, 1);
+		game.put(-3, 1);
+		game.put(0, -2);
+		game.put(0, 0);
+		game.put(-2, 0);
+
+		game.put(-1, -1);
+
+		assertThat(game.getBallPosition(-1, -1, 2).getColor()).isNotNull();
 	}
 
 	@Test
