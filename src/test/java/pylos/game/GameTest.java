@@ -1,9 +1,5 @@
 package pylos.game;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.LogManager;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,15 +10,6 @@ import pylos.game.Game;
  */
 public class GameTest {
 	
-	static {
-		InputStream logging = GameTest.class.getResourceAsStream("/logging.properties");
-		try {
-			LogManager.getLogManager().readConfiguration(logging);
-		} catch (SecurityException e) {
-		} catch (IOException e) {
-		}
-	}
-
 	@Test
 	public void testMove() {
 		Game g = new Game();

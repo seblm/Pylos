@@ -4,14 +4,11 @@
 package pylos.game;
 
 import java.util.Observable;
-import java.util.logging.Logger;
 
 /**
  * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>
  */
 public class Game extends Observable {
-
-	private static final Logger logger = Logger.getLogger(Game.class.getName());
 
 	private Color currentColor;
 
@@ -181,7 +178,6 @@ public class Game extends Observable {
 	 */
 	public void put(final int x, final int y) throws IllegalStateException,
 			IllegalArgumentException {
-		logger.entering(this.getClass().getName(), "put", new Object[] { x, y });
 		if (currentState != State.CLASSIC) {
 			throw new IllegalStateException("can't put a new ball : have to pass or remove ball");
 		}
