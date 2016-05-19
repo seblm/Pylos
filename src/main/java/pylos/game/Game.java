@@ -10,7 +10,7 @@ public class Game {
 	
 	private BallPosition[][][] ballPositions;
 
-	public Game() {
+	Game() {
 		currentColor = Color.WHITE;
 		currentState = State.CLASSIC;
 		columns = new Column[7][7];
@@ -65,7 +65,7 @@ public class Game {
 		}
 	}
 	
-	protected void specialMove() {
+	void specialMove() {
 		currentState = State.SPECIAL1;
 	}
 
@@ -78,7 +78,7 @@ public class Game {
 		currentState = State.CLASSIC;
 	}
 	
-	public Column getColumn(final int x, final int y) {
+	private Column getColumn(final int x, final int y) {
 		try {
 			return columns[x + 3][y + 3];
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -86,7 +86,7 @@ public class Game {
 		}
 	}
 	
-	public BallPosition getBallPosition(final int x, final int y, final int z) {
+	BallPosition getBallPosition(final int x, final int y, final int z) {
 		try {
 			return ballPositions[x + 3][y + 3][z];
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -94,8 +94,8 @@ public class Game {
 		}
 	}
 
-	protected void printBoard() {
-		Color color = null;
+	private void printBoard() {
+		Color color;
 		System.out.print("  ");
 		for (int y = -3; y <= 3; y++) {
 			if (y >= 0) {
@@ -165,7 +165,7 @@ public class Game {
 	 * @throws IllegalStateException
 	 *             threw if current state doesn't permit to put a ball
 	 */
-	public void put(final int x, final int y) throws IllegalStateException,
+	void put(final int x, final int y) throws IllegalStateException,
 			IllegalArgumentException {
 		if (currentState != State.CLASSIC) {
 			throw new IllegalStateException("can't put a new ball : have to pass or remove ball");
@@ -176,11 +176,7 @@ public class Game {
 		}
 	}
 	
-	public void put(final Column column) {
-		put(column.getX(), column.getY());
-	}
-
-	public void remove(int x, int y) {
+	void remove(int x, int y) {
 		if (currentState == State.CLASSIC) {
 			throw new IllegalStateException("can't remove a ball : have to make square or lines in order to");
 		}
@@ -192,14 +188,14 @@ public class Game {
 		}
 	}
 
-	public void pass() {
+	void pass() {
 		if (currentState.equals(State.CLASSIC)) {
 			throw new IllegalArgumentException("can't pass : have to put a ball");
 		}
 		switchColor();
 	}
 
-	public void move(int xFrom, int yFrom, int xTo, int yTo) {
+	void move(int xFrom, int yFrom, int xTo, int yTo) {
 		if (!currentState.equals(State.CLASSIC)) {
 			throw new IllegalArgumentException("can't move : have to pass or remove a ball");
 		}

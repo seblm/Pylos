@@ -6,6 +6,6 @@ package pylos.game;
  * resides on the fact that when a player trigger a SPECIAL1 state, he may plays
  * for two additional moves.
  */
-public enum State {
+enum State {
 	CLASSIC, SPECIAL1, SPECIAL2
 }

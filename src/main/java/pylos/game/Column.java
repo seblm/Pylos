@@ -1,6 +1,6 @@
 package pylos.game;
 
-public class Column {
+class Column {
 	
 	private int colorPosition;
 	
@@ -12,7 +12,7 @@ public class Column {
 	
 	private BallPosition[] ballPositions;
 	
-	protected Column(final BallPosition[] ballPositions) {
+	Column(final BallPosition[] ballPositions) {
 		this.ballPositions = ballPositions;
 		colorPosition = -1;
 		emptyPosition = 0;
@@ -23,31 +23,15 @@ public class Column {
 		}
 	}
 	
-	public Color getColor() {
+	Color getColor() {
 		try {
 			return ballPositions[colorPosition].getColor();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
 	}
-	
-	protected int getX() {
-		return ballPositions[0].getX();
-	}
-	
-	protected int getY() {
-		return ballPositions[0].getY();
-	}
-	
-	public boolean isCanAcceptBall() {
-		return canAcceptBall;
-	}
-	
-	public boolean isCanRemoveBall() {
-		return canRemoveBall;
-	}
-	
-	public int put(final Color color) {
+
+	int put(final Color color) {
 		if (!canAcceptBall) {
 			throw new IllegalArgumentException("this column cannot accept balls");
 		}
@@ -59,7 +43,7 @@ public class Column {
 		return level;
 	}
 	
-	public int remove(final Color color) {
+	int remove(final Color color) {
 		if (!canRemoveBall) {
 			throw new IllegalStateException("this column cannot remove ball");
 		}
@@ -69,13 +53,14 @@ public class Column {
 		return level;
 	}
 	
-	protected void setCanAcceptBall() {
-		if (colorPosition < ballPositions.length) {
-			// column is not filled
-			canAcceptBall = true;
-		}
+	void setCanAcceptBall() {
+		canAcceptBall = columnIsNotFilled();
 	}
-	
+
+	private boolean columnIsNotFilled() {
+		return colorPosition < ballPositions.length;
+	}
+
 	@Override
 	public String toString() {
 		return "Column(" + ballPositions[0].getX() + ", " + ballPositions[0].getY() + ")";

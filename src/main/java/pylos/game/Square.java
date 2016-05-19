@@ -1,32 +1,32 @@
 package pylos.game;
 
-public class Square {
-	
+class Square {
+
 	private BallPosition[] ballPositions;
-	
+
 	private Column column;
-	
+
 	private int numberOfBalls;
-	
+
 	private Game game;
-	
-	protected Square(final BallPosition[] ballPositions, final Column column, final Game game) {
+
+	Square(final BallPosition[] ballPositions, final Column column, final Game game) {
 		this.ballPositions = ballPositions;
 		this.column = column;
 		this.numberOfBalls = 0;
 		this.game = game;
-		for (int i = 0 ; i < ballPositions.length ; i++) {
-			ballPositions[i].addSquare(this);
+		for (BallPosition ballPosition : ballPositions) {
+			ballPosition.addSquare(this);
 		}
 	}
-	
-	protected void ballAdded() {
+
+	void ballAdded() {
 		if (numberOfBalls < 4) {
 			numberOfBalls++;
 		}
-		
+
 		if (numberOfBalls == 4) {
-			
+
 			// check if ball that have just been added have created a special move
 			Color color = ballPositions[0].getColor();
 			boolean sameColor = true;
@@ -36,15 +36,15 @@ public class Square {
 			if (sameColor) {
 				game.specialMove();
 			}
-			
+
 			column.setCanAcceptBall();
 		}
 	}
-	
-	protected void ballRemoved() {
+
+	void ballRemoved() {
 		if (numberOfBalls > 0) {
 			numberOfBalls--;
 		}
 	}
-	
+
 }
