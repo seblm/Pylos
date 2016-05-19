@@ -3,11 +3,6 @@ package pylos.game;
 import org.junit.Assert;
 import org.junit.Test;
 
-import pylos.game.Game;
-
-/**
- * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>
- */
 public class GameTest {
 	
 	@Test

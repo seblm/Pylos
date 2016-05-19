@@ -1,13 +1,7 @@
-/*
- * Created on 12 mars 2005
- */
 package pylos.game;
 
 import java.util.Observable;
 
-/**
- * @author Sébastian Le Merdy <sebastian.lemerdy@gmail.com>
- */
 public class Game extends Observable {
 
 	private Color currentColor;
@@ -18,9 +12,6 @@ public class Game extends Observable {
 	
 	private BallPosition[][][] ballPositions;
 
-	/**
-	 * Default constructor.
-	 */
 	public Game() {
 		currentColor = Color.WHITE;
 		currentState = State.CLASSIC;
