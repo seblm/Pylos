@@ -228,4 +228,8 @@ public class Game extends Observable {
 			switchColor();
 		}
 	}
+
+	public static void main(String[] args) {
+		new Game().printBoard();
+	}
 }

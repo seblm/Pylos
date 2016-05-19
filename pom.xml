@@ -25,7 +25,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>pylos.scene.Scene</mainClass>
+							<mainClass>pylos.game.Game</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
