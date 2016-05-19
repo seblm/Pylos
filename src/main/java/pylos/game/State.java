@@ -7,5 +7,5 @@ package pylos.game;
  * for two additional moves.
  */
 enum State {
-	CLASSIC, SPECIAL1, SPECIAL2
+    CLASSIC, SPECIAL1, SPECIAL2
 }
