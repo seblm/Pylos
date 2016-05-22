@@ -80,48 +80,48 @@ public class Game {
         }
     }
 
-    private void printBoard() {
+    String printBoard() {
+        StringBuilder board = new StringBuilder();
         Color color;
-        System.out.print("  ");
+        printColumns(board);
         for (int y = -3; y <= 3; y++) {
-            if (y >= 0) {
-                System.out.print(" ");
-            }
-            System.out.print(y);
-        }
-        System.out.println();
-        for (int y = -3; y <= 3; y++) {
-            if (y >= 0) {
-                System.out.print(" ");
-            }
-            System.out.print(y + " ");
+            printCoordinate(board, y);
+            board.append(' ');
             for (int x = -3; x <= 3; x++) {
                 if (Math.abs(x) % 2 == Math.abs(y) % 2) {
                     color = columns[x + 3][y + 3].getColor();
                     if (Color.WHITE.equals(color)) {
-                        System.out.print("O ");
+                        board.append('O');
                     } else if (Color.BLACK.equals(color)) {
-                        System.out.print("X ");
+                        board.append('X');
                     } else {
-                        System.out.print(". ");
+                        board.append('.');
                     }
                 } else {
-                    System.out.print("  ");
+                    board.append(' ');
                 }
+                board.append(' ');
             }
-            if (y >= 0) {
-                System.out.print(" ");
-            }
-            System.out.println(y);
+            printCoordinate(board, y);
+            board.append('\n');
         }
-        System.out.print("  ");
+        printColumns(board);
+        return board.toString();
+    }
+
+    private void printColumns(StringBuilder board) {
+        board.append("  ");
         for (int y = -3; y <= 3; y++) {
-            if (y >= 0) {
-                System.out.print(" ");
-            }
-            System.out.print(y);
+            printCoordinate(board, y);
         }
-        System.out.println();
+        board.append('\n');
+    }
+
+    private void printCoordinate(StringBuilder board, int coordinate) {
+        if (coordinate >= 0) {
+            board.append(' ');
+        }
+        board.append(coordinate);
     }
 
     /**

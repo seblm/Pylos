@@ -132,12 +132,30 @@ public class GameTest {
     }
 
     @Test
-    public void should_not_move_ball_if_there_is_no_square_nor_line() {
+    public void should_not_move_ball_that_doesn_t_exists() {
         Throwable throwable = catchThrowable(() -> game.move(-3, -3, 3, 3));
 
-        assertThat(throwable)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("this column cannot remove ball");
+        assertThat(throwable).isNotNull();
+    }
+
+    @Test
+    public void should_not_move_ball_to_same_level() {
+        game.put(-3, -3);
+        game.put(1, 1);
+
+        Throwable throwable = catchThrowable(() -> game.move(-3, -3, 3, 3));
+
+        assertThat(game.printBoard()).isEqualTo(
+                "  -3-2-1 0 1 2 3\n" +
+                "-3 O   .   .   . -3\n" +
+                "-2   .   .   .   -2\n" +
+                "-1 .   .   .   . -1\n" +
+                " 0   .   .   .    0\n" +
+                " 1 .   .   X   .  1\n" +
+                " 2   .   .   .    2\n" +
+                " 3 .   .   .   .  3\n" +
+                "  -3-2-1 0 1 2 3\n");
+        assertThat(throwable).isNotNull();
     }
 
     @Test
