@@ -57,6 +57,10 @@ class BallPosition {
         return y;
     }
 
+    int getZ() {
+        return z;
+    }
+
     @Override
     public String toString() {
         StringBuilder toString = new StringBuilder();

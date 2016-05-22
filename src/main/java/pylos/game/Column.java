@@ -35,6 +35,14 @@ class Column {
         }
     }
 
+    int getPosition() {
+        try {
+            return ballPositions[emptyPosition].getZ();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return -1;
+        }
+    }
+
     int put(final Color color) {
         if (!canAcceptBall) {
             throw new IllegalArgumentException("this column cannot accept balls");

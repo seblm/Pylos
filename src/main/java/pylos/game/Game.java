@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.lang.Math.max;
 import static java.util.stream.Collectors.toList;
 
 public class Game {
@@ -181,9 +182,14 @@ public class Game {
         if (!currentState.equals(State.CLASSIC)) {
             throw new IllegalArgumentException("can't move : have to pass or remove a ball");
         }
-        int levelFrom = getColumn(xFrom, yFrom).remove(currentColor);
-        int levelTo = getColumn(xTo, yTo).put(currentColor);
-        if (levelTo <= levelFrom) {
+        int positionFrom = getColumn(xFrom, yFrom).getPosition();
+        int positionTo = getColumn(xTo, yTo).getPosition();
+        if (max(positionFrom, 0) >= max(positionTo, 0)) {
+            throw new IllegalArgumentException("can't move: destination should be higher");
+        }
+        positionFrom = getColumn(xFrom, yFrom).remove(currentColor);
+        positionTo = getColumn(xTo, yTo).put(currentColor);
+        if (positionTo <= positionFrom) {
             columns[xFrom + 3][yFrom + 3].put(currentColor);
             columns[xTo + 3][yTo + 3].remove(currentColor);
         }
