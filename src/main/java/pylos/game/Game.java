@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
 public class Game {
 
     private Color currentColor;
@@ -194,6 +196,13 @@ public class Game {
         return allCoordinates()
                 .map(c -> ballPositions[c.x][c.y][c.level].getColor())
                 .anyMatch(color -> color != null);
+    }
+
+    List<Command> nextMoves() {
+        return allCoordinates()
+                .filter(c -> columns[c.x][c.y].canAcceptBall())
+                .map(c -> new Put(c.x - 3, c.y - 3))
+                .collect(toList());
     }
 
     private Stream<Coordinates> allCoordinates() {

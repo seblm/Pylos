@@ -23,6 +23,10 @@ class Column {
         }
     }
 
+    boolean canAcceptBall() {
+        return canAcceptBall;
+    }
+
     Color getColor() {
         try {
             return ballPositions[colorPosition].getColor();
