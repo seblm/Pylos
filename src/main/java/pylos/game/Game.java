@@ -1,5 +1,9 @@
 package pylos.game;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
 public class Game {
 
     private Color currentColor;
@@ -18,51 +22,31 @@ public class Game {
         ballPositions = new BallPosition[7][7][4];
 
         // creates ball positions
-        for (int level = 0; level <= 3; level++) {
-            for (int x = -3 + level; x <= 3 - level; x += 2) {
-                for (int y = -3 + level; y <= 3 - level; y += 2) {
-                    ballPositions[x + 3][y + 3][level] = new BallPosition(x, y, level);
-                }
-            }
-        }
+        allCoordinates().forEach(c -> ballPositions[c.x][c.y][c.level] = new BallPosition(c.x - 3, c.y - 3, c.level));
 
         // creates columns
-        for (int x = -3; x <= 3; x++) {
-            for (int y = -3; y <= 3; y++) {
-                if (Math.abs(x) % 2 == Math.abs(y) % 2) {
-                    // translates x and y into BallPosition's array referential
-                    final int X = x + 3;
-                    final int Y = y + 3;
+        allCoordinates()
+                .filter(c -> c.level < 2)
+                .forEach(c -> {
                     // find BallPositions
-                    if (Math.abs(x) > 1 || Math.abs(y) > 1) {
+                    if (Math.abs(c.x - 3) > 1 || Math.abs(c.y - 3) > 1) {
                         // current column have only one BallPosition
-                        columns[X][Y] = new Column(new BallPosition[]{ballPositions[X][Y][(Math.abs(x) + 1) % 2]});
+                        columns[c.x][c.y] = new Column(new BallPosition[]{ballPositions[c.x][c.y][c.level]});
                     } else {
                         // current column have two BallPositions
-                        columns[X][Y] = new Column(new BallPosition[]{ballPositions[X][Y][(Math.abs(x) + 1) % 2], ballPositions[X][Y][(Math.abs(x) + 1) % 2 + 2]});
+                        columns[c.x][c.y] = new Column(new BallPosition[]{ballPositions[c.x][c.y][c.level], ballPositions[c.x][c.y][c.level + 2]});
                     }
-                }
-            }
-        }
+                });
 
         // creates squares
-        for (int level = 1; level <= 3; level++) {
-            for (int x = -3 + level; x <= 3 - level; x += 2) {
-                for (int y = -3 + level; y <= 3 - level; y += 2) {
-                    if (Math.abs(x) % 2 == Math.abs(y) % 2) {
-                        // translates x and y into BallPosition's array referential
-                        final int X = x + 3;
-                        final int Y = y + 3;
-                        new Square(new BallPosition[]{
-                                ballPositions[X - 1][Y - 1][level - 1],
-                                ballPositions[X - 1][Y + 1][level - 1],
-                                ballPositions[X + 1][Y - 1][level - 1],
-                                ballPositions[X + 1][Y + 1][level - 1]
-                        }, columns[X][Y], this);
-                    }
-                }
-            }
-        }
+        allCoordinates()
+                .filter(c -> c.level > 0)
+                .forEach(c -> new Square(new BallPosition[]{
+                        ballPositions[c.x - 1][c.y - 1][c.level - 1],
+                        ballPositions[c.x - 1][c.y + 1][c.level - 1],
+                        ballPositions[c.x + 1][c.y - 1][c.level - 1],
+                        ballPositions[c.x + 1][c.y + 1][c.level - 1]
+                }, columns[c.x][c.y], this));
     }
 
     void specialMove() {
@@ -207,17 +191,35 @@ public class Game {
     }
 
     boolean over() {
+        return allCoordinates()
+                .map(c -> ballPositions[c.x][c.y][c.level].getColor())
+                .anyMatch(color -> color != null);
+    }
+
+    private Stream<Coordinates> allCoordinates() {
+        List<Coordinates> allCoordinates = new ArrayList<>();
         for (int level = 0; level <= 3; level++) {
             for (int x = -3 + level; x <= 3 - level; x += 2) {
                 for (int y = -3 + level; y <= 3 - level; y += 2) {
-                    if (ballPositions[x + 3][y + 3][level].getColor() == null) {
-                        return false;
+                    if (Math.abs(x) % 2 == Math.abs(y) % 2) {
+                        allCoordinates.add(new Coordinates(x + 3, y + 3, level));
                     }
                 }
             }
         }
+        return allCoordinates.stream();
+    }
 
-        return true;
+    private static class Coordinates {
+        final int x;
+        final int y;
+        final int level;
+
+        Coordinates(int x, int y, int level) {
+            this.x = x;
+            this.y = y;
+            this.level = level;
+        }
     }
 
     public static void main(String[] args) {
