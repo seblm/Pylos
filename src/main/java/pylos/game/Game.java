@@ -90,7 +90,7 @@ public class Game {
             board.append(' ');
             for (int x = -3; x <= 3; x++) {
                 if (Math.abs(x) % 2 == Math.abs(y) % 2) {
-                    color = columns[x + 3][y + 3].getColor();
+                    color = getColumn(x, y).getColor();
                     if (Color.WHITE.equals(color)) {
                         board.append('O');
                     } else if (Color.BLACK.equals(color)) {
@@ -190,8 +190,8 @@ public class Game {
         positionFrom = getColumn(xFrom, yFrom).remove(currentColor);
         positionTo = getColumn(xTo, yTo).put(currentColor);
         if (positionTo <= positionFrom) {
-            columns[xFrom + 3][yFrom + 3].put(currentColor);
-            columns[xTo + 3][yTo + 3].remove(currentColor);
+            getColumn(xFrom, yFrom).put(currentColor);
+            getColumn(xTo, yTo).remove(currentColor);
         }
         if (currentState == State.CLASSIC) {
             switchColor();
@@ -206,7 +206,7 @@ public class Game {
 
     List<Command> nextMoves() {
         return allCoordinates()
-                .filter(c -> columns[c.x][c.y].canAcceptBall())
+                .filter(c -> getColumn(c.x - 3, c.y - 3).canAcceptBall())
                 .map(c -> new Put(c.x - 3, c.y - 3))
                 .collect(toList());
     }
