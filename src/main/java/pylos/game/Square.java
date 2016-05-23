@@ -8,13 +8,13 @@ class Square {
 
     private int numberOfBalls;
 
-    private Game game;
+    private Pylos pylos;
 
-    Square(final BallPosition[] ballPositions, final Column column, final Game game) {
+    Square(final BallPosition[] ballPositions, final Column column, final Pylos pylos) {
         this.ballPositions = ballPositions;
         this.column = column;
         this.numberOfBalls = 0;
-        this.game = game;
+        this.pylos = pylos;
         for (BallPosition ballPosition : ballPositions) {
             ballPosition.addSquare(this);
         }
@@ -34,7 +34,7 @@ class Square {
                 sameColor &= color.equals(ballPositions[i].getColor());
             }
             if (sameColor) {
-                game.specialMove();
+                pylos.specialMove();
             }
 
             column.setCanAcceptBall();

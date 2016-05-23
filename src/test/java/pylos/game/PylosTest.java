@@ -6,18 +6,18 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-public class GameTest {
+public class PylosTest {
 
-    private Game game;
+    private Pylos pylos;
 
     @Before
     public void createGame() {
-        game = new Game();
+        pylos = new Pylos();
     }
 
     @Test
     public void should_not_put_a_ball_with_invalid_coordinates() {
-        Throwable throwable = catchThrowable(() -> game.put(6, -3));
+        Throwable throwable = catchThrowable(() -> pylos.put(6, -3));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalArgumentException.class)
@@ -26,16 +26,16 @@ public class GameTest {
 
     @Test
     public void should_put_a_ball_with_valid_coordinates() {
-        game.put(-3, -3);
+        pylos.put(-3, -3);
 
-        assertThat(game.getBallPosition(-3, -3, 0).getColor()).isNotNull();
+        assertThat(pylos.getBallPosition(-3, -3, 0).getColor()).isNotNull();
     }
 
     @Test
     public void should_not_put_a_ball_on_an_occupied_column() {
-        game.put(-3, -3);
+        pylos.put(-3, -3);
 
-        Throwable throwable = catchThrowable(() -> game.put(-3, -3));
+        Throwable throwable = catchThrowable(() -> pylos.put(-3, -3));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalArgumentException.class)
@@ -44,7 +44,7 @@ public class GameTest {
 
     @Test
     public void should_not_put_a_ball_on_an_invalid_level() {
-        Throwable throwable = catchThrowable(() -> game.put(-2, -2));
+        Throwable throwable = catchThrowable(() -> pylos.put(-2, -2));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalArgumentException.class)
@@ -53,11 +53,11 @@ public class GameTest {
 
     @Test
     public void should_not_put_a_ball_on_an_instable_place() {
-        game.put(-3, -3);
-        game.put(-3, -1);
-        game.put(-1, -1);
+        pylos.put(-3, -3);
+        pylos.put(-3, -1);
+        pylos.put(-1, -1);
 
-        Throwable throwable = catchThrowable(() -> game.put(-2, -2));
+        Throwable throwable = catchThrowable(() -> pylos.put(-2, -2));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalArgumentException.class)
@@ -66,38 +66,38 @@ public class GameTest {
 
     @Test
     public void should_put_a_ball_on_the_second_level() {
-        game.put(-3, -3);
-        game.put(-3, -1);
-        game.put(-1, -1);
-        game.put(-1, -3);
+        pylos.put(-3, -3);
+        pylos.put(-3, -1);
+        pylos.put(-1, -1);
+        pylos.put(-1, -3);
 
-        game.put(-2, -2);
+        pylos.put(-2, -2);
 
-        assertThat(game.getBallPosition(-2, -2, 1).getColor()).isNotNull();
+        assertThat(pylos.getBallPosition(-2, -2, 1).getColor()).isNotNull();
     }
 
     @Test
     public void should_move_a_ball_on_the_second_level() {
-        game.put(-3, -3);
-        game.put(3, 3);
-        game.put(-3, -1);
-        game.put(-1, -1);
-        game.put(-1, -3);
+        pylos.put(-3, -3);
+        pylos.put(3, 3);
+        pylos.put(-3, -1);
+        pylos.put(-1, -1);
+        pylos.put(-1, -3);
 
-        game.move(3, 3, -2, -2);
+        pylos.move(3, 3, -2, -2);
 
-        assertThat(game.getBallPosition(-2, -2, 1).getColor()).isNotNull();
+        assertThat(pylos.getBallPosition(-2, -2, 1).getColor()).isNotNull();
     }
 
     @Test
     public void should_not_move_a_ball_if_it_doesn_t_belongs_to_current_color() {
-        game.put(3, 3);
-        game.put(-3, -3);
-        game.put(-3, -1);
-        game.put(-1, -1);
-        game.put(-1, -3);
+        pylos.put(3, 3);
+        pylos.put(-3, -3);
+        pylos.put(-3, -1);
+        pylos.put(-1, -1);
+        pylos.put(-1, -3);
 
-        Throwable throwable = catchThrowable(() -> game.move(3, 3, -2, -2));
+        Throwable throwable = catchThrowable(() -> pylos.move(3, 3, -2, -2));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalStateException.class)
@@ -107,24 +107,24 @@ public class GameTest {
     @Test
     public void should_put_a_ball_on_the_third_level() {
         whiteHasSquare();
-        game.pass();
-        game.put(-2, -2);
-        game.put(1, -3);
-        game.put(1, -1);
-        game.put(-1, 1);
-        game.put(-3, 1);
-        game.put(0, -2);
-        game.put(0, 0);
-        game.put(-2, 0);
+        pylos.pass();
+        pylos.put(-2, -2);
+        pylos.put(1, -3);
+        pylos.put(1, -1);
+        pylos.put(-1, 1);
+        pylos.put(-3, 1);
+        pylos.put(0, -2);
+        pylos.put(0, 0);
+        pylos.put(-2, 0);
 
-        game.put(-1, -1);
+        pylos.put(-1, -1);
 
-        assertThat(game.getBallPosition(-1, -1, 2).getColor()).isNotNull();
+        assertThat(pylos.getBallPosition(-1, -1, 2).getColor()).isNotNull();
     }
 
     @Test
     public void should_not_remove_ball_if_there_is_no_square_nor_line() {
-        Throwable throwable = catchThrowable(() -> game.remove(-3, -3));
+        Throwable throwable = catchThrowable(() -> pylos.remove(-3, -3));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalStateException.class)
@@ -133,19 +133,19 @@ public class GameTest {
 
     @Test
     public void should_not_move_ball_that_doesn_t_exists() {
-        Throwable throwable = catchThrowable(() -> game.move(-3, -3, 3, 3));
+        Throwable throwable = catchThrowable(() -> pylos.move(-3, -3, 3, 3));
 
         assertThat(throwable).isNotNull();
     }
 
     @Test
     public void should_not_move_ball_to_same_level() {
-        game.put(-3, -3);
-        game.put(1, 1);
+        pylos.put(-3, -3);
+        pylos.put(1, 1);
 
-        Throwable throwable = catchThrowable(() -> game.move(-3, -3, 3, 3));
+        Throwable throwable = catchThrowable(() -> pylos.move(-3, -3, 3, 3));
 
-        assertThat(game.printBoard()).isEqualTo(
+        assertThat(pylos.printBoard()).isEqualTo(
                 "  -3-2-1 0 1 2 3\n" +
                 "-3 O   .   .   . -3\n" +
                 "-2   .   .   .   -2\n" +
@@ -160,7 +160,7 @@ public class GameTest {
 
     @Test
     public void should_not_pass_if_there_is_no_square_nor_line() {
-        Throwable throwable = catchThrowable(() -> game.pass());
+        Throwable throwable = catchThrowable(() -> pylos.pass());
 
         assertThat(throwable)
                 .isInstanceOf(IllegalArgumentException.class)
@@ -171,7 +171,7 @@ public class GameTest {
     public void should_not_put_ball_if_user_makes_a_square() {
         whiteHasSquare();
 
-        Throwable throwable = catchThrowable(() -> game.put(1, 3));
+        Throwable throwable = catchThrowable(() -> pylos.put(1, 3));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalStateException.class)
@@ -182,26 +182,26 @@ public class GameTest {
     public void should_remove_once_a_ball() {
         whiteHasSquare();
 
-        game.remove(-3, -3);
+        pylos.remove(-3, -3);
 
-        assertThat(game.getBallPosition(-3, -3, 0).getColor()).isNull();
+        assertThat(pylos.getBallPosition(-3, -3, 0).getColor()).isNull();
     }
 
     @Test
     public void should_remove_twice_a_ball() {
         whiteHasSquare();
-        game.remove(-3, -3);
+        pylos.remove(-3, -3);
 
-        game.remove(-1, -3);
+        pylos.remove(-1, -3);
 
-        assertThat(game.getBallPosition(-1, -3, 0).getColor()).isNull();
+        assertThat(pylos.getBallPosition(-1, -3, 0).getColor()).isNull();
     }
 
     @Test
     public void should_not_remove_ball_that_is_not_belongs_to_himself() {
         whiteHasSquare();
 
-        Throwable throwable = catchThrowable(() -> game.remove(3, 1));
+        Throwable throwable = catchThrowable(() -> pylos.remove(3, 1));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalStateException.class)
@@ -211,9 +211,9 @@ public class GameTest {
     @Test
     public void should_not_put_ball_after_square_and_remove() {
         whiteHasSquare();
-        game.remove(-3, -3);
+        pylos.remove(-3, -3);
 
-        Throwable throwable = catchThrowable(() -> game.put(-3, 1));
+        Throwable throwable = catchThrowable(() -> pylos.put(-3, 1));
 
         assertThat(throwable)
                 .isInstanceOf(IllegalStateException.class)
@@ -224,31 +224,31 @@ public class GameTest {
     public void should_pass() {
         whiteHasSquare();
 
-        game.pass();
+        pylos.pass();
 
         assertThat(currentColor()).isEqualTo(Color.BLACK);
     }
 
     private void whiteHasSquare() {
         // WHITE
-        game.put(-3, -3);
+        pylos.put(-3, -3);
         // BLACK
-        game.put(1, 1);
+        pylos.put(1, 1);
         // WHITE
-        game.put(-1, -3);
+        pylos.put(-1, -3);
         // BLACK
-        game.put(3, 3);
+        pylos.put(3, 3);
         // WHITE
-        game.put(-1, -1);
+        pylos.put(-1, -1);
         // BLACK
-        game.put(3, 1);
+        pylos.put(3, 1);
         // WHITE
-        game.put(-3, -1);
+        pylos.put(-3, -1);
     }
 
     private Color currentColor() {
-        game.put(1, 3);
-        return game.getBallPosition(1, 3, 0).getColor();
+        pylos.put(1, 3);
+        return pylos.getBallPosition(1, 3, 0).getColor();
     }
 
 }
