@@ -11,8 +11,6 @@ class BallPosition {
 
     private int z;
 
-    private Column column;
-
     private Set<Square> squares;
 
     private Color color;
@@ -40,13 +38,6 @@ class BallPosition {
 
     void addSquare(final Square square) {
         squares.add(square);
-    }
-
-    void setColumn(final Column column) {
-        if (this.column != null) {
-            throw new IllegalStateException("column " + column + " is already set");
-        }
-        this.column = column;
     }
 
     int getX() {

@@ -18,9 +18,6 @@ class Column {
         emptyPosition = 0;
         canAcceptBall = !ballPositions[emptyPosition].hasPairCoordinates();
         canRemoveBall = false;
-        for (BallPosition ballPosition : ballPositions) {
-            ballPosition.setColumn(this);
-        }
     }
 
     boolean canAcceptBall() {
