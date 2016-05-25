@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import static java.lang.Math.max;
 import static java.util.stream.Collectors.toList;
 
-public class Pylos {
+class Pylos {
 
     private Color currentColor;
 
@@ -211,7 +211,7 @@ public class Pylos {
                 .collect(toList());
     }
 
-    private Stream<Coordinates> allCoordinates() {
+    Stream<Coordinates> allCoordinates() {
         List<Coordinates> allCoordinates = new ArrayList<>();
         for (int level = 0; level <= 3; level++) {
             for (int x = -3 + level; x <= 3 - level; x += 2) {
@@ -225,7 +225,7 @@ public class Pylos {
         return allCoordinates.stream();
     }
 
-    private static class Coordinates {
+    static class Coordinates {
         final int x;
         final int y;
         final int level;
@@ -234,6 +234,11 @@ public class Pylos {
             this.x = x;
             this.y = y;
             this.level = level;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + x + ", " + y + ", " + level + ')';
         }
     }
 
