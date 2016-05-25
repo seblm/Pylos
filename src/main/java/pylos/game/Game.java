@@ -1,11 +1,33 @@
 package pylos.game;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.joining;
 
 public class Game {
     public static void main(String[] args) {
         final Pylos pylos = new Pylos();
+//        while (!pylos.over()) {
+        printBoard(pylos);
+
+        List<Command> nextMoves = pylos.nextMoves();
+        System.out.print("\n"
+                + "Here are all valid moves:\n"
+                + nextMoves.stream().map(Object::toString).collect(joining("; "))
+                + "\n");
+        Command nextMove = nextMoves.get(new Random().nextInt(nextMoves.size()));
+
+        System.out.print("The program will pick you some random move for you: " + nextMove);
+        pylos.apply(nextMove);
+
+        printBoard(pylos);
+//        }
+    }
+
+    private static void printBoard(Pylos pylos) {
         pylos.allCoordinates().forEach(c -> {
             final int level = c.level + 1;
             if (c.x == c.y && c.x == c.level) {

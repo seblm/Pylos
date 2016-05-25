@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import static java.lang.Math.max;
 import static java.util.stream.Collectors.toList;
 
-class Pylos {
+public class Pylos {
 
     private Color currentColor;
 
@@ -17,7 +17,7 @@ class Pylos {
 
     private BallPosition[][][] ballPositions;
 
-    Pylos() {
+    public Pylos() {
         currentColor = Color.WHITE;
         currentState = State.CLASSIC;
         columns = new Column[7][7];
@@ -50,6 +50,18 @@ class Pylos {
                         ballPositions[c.x + 1][c.y - 1][c.level - 1],
                         ballPositions[c.x + 1][c.y + 1][c.level - 1]
                 }, columns[c.x][c.y], this));
+    }
+
+    void apply(Command command) {
+        if (!nextMoves().contains(command)) {
+            throw new IllegalArgumentException(command + " is not applicable");
+        }
+        if (command instanceof Put) {
+            Put putCommand = (Put) command;
+            put(putCommand.x, putCommand.y);
+        } else {
+            throw new IllegalArgumentException(command + " is not yet handled");
+        }
     }
 
     void specialMove() {

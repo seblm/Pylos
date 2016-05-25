@@ -3,8 +3,8 @@ package pylos.game;
 import java.util.Objects;
 
 class Put implements Command {
-    private final int x;
-    private final int y;
+    final int x;
+    final int y;
 
     Put(int x, int y) {
         this.x = x;
