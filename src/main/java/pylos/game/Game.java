@@ -10,22 +10,30 @@ import static java.util.stream.Collectors.joining;
 public class Game {
     public static void main(String[] args) {
         final Pylos pylos = new Pylos();
-//        while (!pylos.over()) {
-        printBoard(pylos);
+        while (!pylos.over()) {
+            printBoard(pylos);
 
-        List<Command> nextMoves = pylos.nextMoves();
-        System.out.print("\n"
-                + "Here are all valid moves:\n"
-                + nextMoves.stream().map(Object::toString).collect(joining("; "))
-                + "\n");
-        Command nextMove = nextMoves.get(new Random().nextInt(nextMoves.size()));
+            List<Command> nextMoves = pylos.nextMoves();
+            System.out.print("\n"
+                    + "Here are all valid moves:\n"
+                    + nextMoves.stream().map(Object::toString).collect(joining("; "))
+                    + "\n");
+            Command nextMove = nextMoves.get(new Random().nextInt(nextMoves.size()));
 
-        System.out.print("The program will pick you some random move for you: " + nextMove);
-        pylos.apply(nextMove);
+            System.out.print("The program will pick you some random move for you: " + nextMove);
+            pylos.apply(nextMove);
 
-        printBoard(pylos);
-//        }
+            printBoard(pylos);
+        }
     }
+
+    // a4  b4  c4  d4
+    //   e3  f3  g3      e3  f3  g3
+    // a3  b3  c3  d3      h2  i2      h2  i2
+    //   e2  f2  g2      e2  f2  g2      j1
+    // a2  b2  c2  d2      h1  i1      h1  i1
+    //   e1  f1  g1      e1  f1  g1
+    // a1  b1  c1  d1
 
     private static void printBoard(Pylos pylos) {
         pylos.allCoordinates().forEach(c -> {

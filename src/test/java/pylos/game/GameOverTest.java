@@ -23,36 +23,36 @@ public class GameOverTest {
 
     @Test
     public void should_tell_game_over_over_once_all_balls_has_been_put_onto_board() {
-        pylos.put(-3, -3);
-        pylos.put(-3, -1);
-        pylos.put(-3, 1);
-        pylos.put(-3, 3);
-        pylos.put(-1, -3);
-        pylos.put(-1, -1);
-        pylos.put(-1, 1);
-        pylos.put(-1, 3);
-        pylos.put(1, -3);
-        pylos.put(1, -1);
-        pylos.put(1, 1);
-        pylos.put(1, 3);
-        pylos.put(3, -3);
-        pylos.put(3, -1);
-        pylos.put(3, 1);
-        pylos.put(3, 3);
-        pylos.put(-2, -2);
-        pylos.put(-2, 0);
-        pylos.put(-2, 2);
-        pylos.put(0, -2);
-        pylos.put(0, 0);
-        pylos.put(0, 2);
-        pylos.put(2, -2);
-        pylos.put(2, 0);
-        pylos.put(2, 2);
-        pylos.put(-1, -1);
-        pylos.put(-1, 1);
-        pylos.put(1, -1);
-        pylos.put(1, 1);
-        pylos.put(0, 0);
+        pylos.apply(new Put("a4"));
+        pylos.apply(new Put("a3"));
+        pylos.apply(new Put("a2"));
+        pylos.apply(new Put("a1"));
+        pylos.apply(new Put("b4"));
+        pylos.apply(new Put("b3"));
+        pylos.apply(new Put("b2"));
+        pylos.apply(new Put("b1"));
+        pylos.apply(new Put("c4"));
+        pylos.apply(new Put("c3"));
+        pylos.apply(new Put("c2"));
+        pylos.apply(new Put("c1"));
+        pylos.apply(new Put("d4"));
+        pylos.apply(new Put("d3"));
+        pylos.apply(new Put("d2"));
+        pylos.apply(new Put("d1"));
+        pylos.apply(new Put("e3"));
+        pylos.apply(new Put("e2"));
+        pylos.apply(new Put("e1"));
+        pylos.apply(new Put("f3"));
+        pylos.apply(new Put("f2"));
+        pylos.apply(new Put("f1"));
+        pylos.apply(new Put("g3"));
+        pylos.apply(new Put("g2"));
+        pylos.apply(new Put("g1"));
+        pylos.apply(new Put("h2"));
+        pylos.apply(new Put("h1"));
+        pylos.apply(new Put("i2"));
+        pylos.apply(new Put("i1"));
+        pylos.apply(new Put("j1"));
 
         boolean gameOver = pylos.over();
 

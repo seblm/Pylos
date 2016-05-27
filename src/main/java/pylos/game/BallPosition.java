@@ -5,13 +5,12 @@ import java.util.Set;
 
 class BallPosition {
 
-    private int x;
-
-    private int y;
-
-    private int z;
-
-    private Set<Square> squares;
+    private final Set<BallPosition> ballPositionsOnTopOfMyself;
+    private final Set<BallPosition> ballPositionsAtTheBottomOfMyself;
+    private final Set<Square> squares;
+    @Deprecated private final int x;
+    @Deprecated private final int y;
+    private final int z;
 
     private Color color;
 
@@ -25,6 +24,8 @@ class BallPosition {
         if (z < 0 || z > 3) {
             throw new IllegalArgumentException("z is not comprise between 0 and 3");
         }
+        this.ballPositionsOnTopOfMyself = new HashSet<>();
+        this.ballPositionsAtTheBottomOfMyself = new HashSet<>();
         this.x = x;
         this.y = y;
         this.z = z;
@@ -32,20 +33,18 @@ class BallPosition {
         this.squares = new HashSet<>();
     }
 
-    boolean hasPairCoordinates() {
-        return x % 2 == 0;
+    BallPosition addBallPositionAtTheBottomOfMyself(BallPosition ballPosition) {
+        ballPositionsAtTheBottomOfMyself.add(ballPosition);
+        ballPosition.addBallPositionOnTopOfIt(this);
+        return this;
+    }
+
+    private void addBallPositionOnTopOfIt(BallPosition ballPosition) {
+        ballPositionsOnTopOfMyself.add(ballPosition);
     }
 
     void addSquare(final Square square) {
         squares.add(square);
-    }
-
-    int getX() {
-        return x;
-    }
-
-    int getY() {
-        return y;
     }
 
     int getZ() {
@@ -60,7 +59,7 @@ class BallPosition {
         } else {
             toString.append("empty");
         }
-        toString.append('(').append(x).append(", ").append(y).append(", ").append(z).append(')');
+        toString.append(' ').append(convertToNewSystem()).append(" (").append(x).append(", ").append(y).append(", ").append(z).append(")");
         return toString.toString();
     }
 
@@ -74,6 +73,12 @@ class BallPosition {
     }
 
     int remove(final Color color) {
+        if (color == null) {
+            throw new IllegalStateException("can't remove empty ball position");
+        }
+        if (hasBallOnTopOfIt()) {
+            throw new IllegalStateException("can't remove ball because there is some ball(s) on top of it");
+        }
         if (!color.equals(this.color)) {
             throw new IllegalStateException("can't remove a ball that don't belongs to the current color");
         }
@@ -86,4 +91,57 @@ class BallPosition {
         return color;
     }
 
+    @Deprecated
+    String convertToNewSystem() {
+        if (x == -3 && z == 0) {
+            return "a" + ((y + 3) / 2 + 1);
+        } else if (x == -1 && z == 0) {
+            return "b" + ((y + 3) / 2 + 1);
+        } else if (x == 1 && z == 0) {
+            return "c" + ((y + 3) / 2 + 1);
+        } else if (x == 3 && z == 0) {
+            return "d" + ((y + 3) / 2 + 1);
+        } else if (x == -2 && z == 1) {
+            return "e" + ((y + 3) / 2 + 1);
+        } else if (x == 0 && z == 1) {
+            return "f" + ((y + 3) / 2 + 1);
+        } else if (x == 2 && z == 1) {
+            return "g" + ((y + 3) / 2 + 1);
+        } else if (x == -1 && z == 2) {
+            return "h" + ((y + 3) / 2);
+        } else if (x == 1 && z == 2) {
+            return "i" + ((y + 3) / 2);
+        } else if (x == 0 && z == 3) {
+            return "j" + ((y + 3) / 2);
+        }
+        return "?";
+    }
+
+    boolean canAcceptBall() {
+        return !hasBallOnTopOfIt() && isStable() && isEmpty();
+    }
+
+    boolean canBeTaken() {
+        return !hasBallOnTopOfIt() && !isEmpty();
+    }
+
+    boolean isNotOnTopOf(BallPosition lowerBallPosition) {
+        return !ballPositionsAtTheBottomOfMyself.contains(lowerBallPosition);
+    }
+
+    boolean isEmpty() {
+        return color == null;
+    }
+
+    boolean isNotEmpty() {
+        return !isEmpty();
+    }
+
+    private boolean hasBallOnTopOfIt() {
+        return ballPositionsOnTopOfMyself.stream().anyMatch(BallPosition::isNotEmpty);
+    }
+
+    private boolean isStable() {
+        return ballPositionsAtTheBottomOfMyself.stream().allMatch(BallPosition::isNotEmpty);
+    }
 }

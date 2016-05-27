@@ -4,15 +4,12 @@ class Square {
 
     private BallPosition[] ballPositions;
 
-    private Column column;
-
     private int numberOfBalls;
 
     private Pylos pylos;
 
-    Square(final BallPosition[] ballPositions, final Column column, final Pylos pylos) {
+    Square(final BallPosition[] ballPositions, final Pylos pylos) {
         this.ballPositions = ballPositions;
-        this.column = column;
         this.numberOfBalls = 0;
         this.pylos = pylos;
         for (BallPosition ballPosition : ballPositions) {
@@ -36,8 +33,6 @@ class Square {
             if (sameColor) {
                 pylos.specialMove();
             }
-
-            column.setCanAcceptBall();
         }
     }
 

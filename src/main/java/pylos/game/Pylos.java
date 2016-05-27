@@ -1,45 +1,121 @@
 package pylos.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
-import static java.lang.Math.max;
 import static java.util.stream.Collectors.toList;
 
 public class Pylos {
 
+    private final Map<String, BallPosition> ballPositionsByCoordinates;
+
     private Color currentColor;
 
     private State currentState;
-
-    private Column[][] columns;
 
     private BallPosition[][][] ballPositions;
 
     public Pylos() {
         currentColor = Color.WHITE;
         currentState = State.CLASSIC;
-        columns = new Column[7][7];
 
         ballPositions = new BallPosition[7][7][4];
 
-        // creates ball positions
-        allCoordinates().forEach(c -> ballPositions[c.x][c.y][c.level] = new BallPosition(c.x - 3, c.y - 3, c.level));
+        ballPositionsByCoordinates = new HashMap<>();
 
-        // creates columns
-        allCoordinates()
-                .filter(c -> c.level < 2)
-                .forEach(c -> {
-                    // find BallPositions
-                    if (Math.abs(c.x - 3) > 1 || Math.abs(c.y - 3) > 1) {
-                        // current column have only one BallPosition
-                        columns[c.x][c.y] = new Column(new BallPosition[]{ballPositions[c.x][c.y][c.level]});
-                    } else {
-                        // current column have two BallPositions
-                        columns[c.x][c.y] = new Column(new BallPosition[]{ballPositions[c.x][c.y][c.level], ballPositions[c.x][c.y][c.level + 2]});
-                    }
-                });
+        // creates ball positions
+        allCoordinates().forEach(c -> {
+            BallPosition ballPosition = new BallPosition(c.x - 3, c.y - 3, c.level);
+            ballPositions[c.x][c.y][c.level] = ballPosition;
+            ballPositionsByCoordinates.put(ballPosition.convertToNewSystem(), ballPosition);
+        });
+
+        // level 2
+        ballPositionsByCoordinates.get("e1")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("a1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("a2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b2"));
+
+        ballPositionsByCoordinates.get("e2")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("a2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("a3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b3"));
+
+        ballPositionsByCoordinates.get("e3")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("a3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("a4"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b4"));
+
+        ballPositionsByCoordinates.get("f1")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c2"));
+
+        ballPositionsByCoordinates.get("f2")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c3"));
+
+        ballPositionsByCoordinates.get("f3")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("b4"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c4"));
+
+        ballPositionsByCoordinates.get("g1")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("d1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("d2"));
+
+        ballPositionsByCoordinates.get("g2")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("d2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("d3"));
+
+        ballPositionsByCoordinates.get("g3")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("d3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("c4"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("d4"));
+
+        // level 3
+        ballPositionsByCoordinates.get("h1")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("e1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("f1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("e2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("f2"));
+
+        ballPositionsByCoordinates.get("h2")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("e2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("f2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("e3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("f3"));
+
+        ballPositionsByCoordinates.get("i1")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("f1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("g1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("f2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("g2"));
+
+        ballPositionsByCoordinates.get("i2")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("f2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("g2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("f3"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("g3"));
+
+        // level 4
+        ballPositionsByCoordinates.get("j1")
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("h1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("i1"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("h2"))
+                .addBallPositionAtTheBottomOfMyself(ballPositionsByCoordinates.get("i2"));
 
         // creates squares
         allCoordinates()
@@ -49,16 +125,24 @@ public class Pylos {
                         ballPositions[c.x - 1][c.y + 1][c.level - 1],
                         ballPositions[c.x + 1][c.y - 1][c.level - 1],
                         ballPositions[c.x + 1][c.y + 1][c.level - 1]
-                }, columns[c.x][c.y], this));
+                }, this));
     }
 
     void apply(Command command) {
         if (!nextMoves().contains(command)) {
-            throw new IllegalArgumentException(command + " is not applicable");
+            throw new IllegalArgumentException(command + " is not applicable. Only " + nextMoves() + " are applicable");
         }
         if (command instanceof Put) {
             Put putCommand = (Put) command;
-            put(putCommand.x, putCommand.y);
+            put(putCommand.coordinates);
+        } else if (command instanceof Move) {
+            Move moveCommand = (Move) command;
+            move(moveCommand.coordinatesFrom, moveCommand.coordinatesTo);
+        } else if (command instanceof Remove) {
+            Remove removeCommand = (Remove) command;
+            remove(removeCommand.coordinates);
+        } else if (command.equals(Command.pass)) {
+            pass();
         } else {
             throw new IllegalArgumentException(command + " is not yet handled");
         }
@@ -77,14 +161,7 @@ public class Pylos {
         currentState = State.CLASSIC;
     }
 
-    private Column getColumn(final int x, final int y) {
-        try {
-            return columns[x + 3][y + 3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("invalid coordinates");
-        }
-    }
-
+    @Deprecated
     BallPosition getBallPosition(final int x, final int y, final int z) {
         try {
             return ballPositions[x + 3][y + 3][z];
@@ -93,89 +170,25 @@ public class Pylos {
         }
     }
 
-    String printBoard() {
-        StringBuilder board = new StringBuilder();
-        Color color;
-        printColumns(board);
-        for (int y = -3; y <= 3; y++) {
-            printCoordinate(board, y);
-            board.append(' ');
-            for (int x = -3; x <= 3; x++) {
-                if (Math.abs(x) % 2 == Math.abs(y) % 2) {
-                    color = getColumn(x, y).getColor();
-                    if (Color.WHITE.equals(color)) {
-                        board.append('O');
-                    } else if (Color.BLACK.equals(color)) {
-                        board.append('X');
-                    } else {
-                        board.append('.');
-                    }
-                } else {
-                    board.append(' ');
-                }
-                board.append(' ');
-            }
-            printCoordinate(board, y);
-            board.append('\n');
-        }
-        printColumns(board);
-        return board.toString();
+    Optional<BallPosition> getBallPosition(String coordinates) {
+        return Optional.ofNullable(ballPositionsByCoordinates.get(coordinates));
     }
 
-    private void printColumns(StringBuilder board) {
-        board.append("  ");
-        for (int y = -3; y <= 3; y++) {
-            printCoordinate(board, y);
-        }
-        board.append('\n');
-    }
-
-    private void printCoordinate(StringBuilder board, int coordinate) {
-        if (coordinate >= 0) {
-            board.append(' ');
-        }
-        board.append(coordinate);
-    }
-
-    /**
-     * Put a ball on board with current color.<br />
-     * This operation succeed if
-     * <ol>
-     * <li>game's state is CLASSIC</li>
-     * <li>coordinates are valid (integer between -3 and 3 for both of us and
-     * same parity)</li>
-     * <li>board position denoted by coordinates are not filled by the maximum
-     * number of balls that it can handle</li>
-     * </ol>
-     * If operation succeed it may switch game's state to SPECIAL1 if the ball
-     * just added creates a line or a square of player's color's balls.
-     * Otherwise, game just give to other player the ability to play.<br />
-     * If operation fails, the cause of error is thrown but nothing else is
-     * performed on game : the same player have to play again.
-     *
-     * @param x abscissa
-     * @param y ordinate
-     * @throws IllegalArgumentException threw if coordinates are wrongs or if ball position denoted
-     *                                  by them is filled with the maximum of balls that it can
-     *                                  handle
-     * @throws IllegalStateException    threw if current state doesn't permit to put a ball
-     */
-    void put(final int x, final int y) throws IllegalStateException,
-            IllegalArgumentException {
+    private void put(String coordinates) {
         if (currentState != State.CLASSIC) {
             throw new IllegalStateException("can't put a new ball : have to pass or remove ball");
         }
-        getColumn(x, y).put(currentColor);
+        ballPositionsByCoordinates.get(coordinates).put(currentColor);
         if (currentState == State.CLASSIC) {
             switchColor();
         }
     }
 
-    void remove(int x, int y) {
+    private void remove(String coordinates) {
         if (currentState == State.CLASSIC) {
             throw new IllegalStateException("can't remove a ball : have to make square or lines in order to");
         }
-        getColumn(x, y).remove(currentColor);
+        getBallPosition(coordinates).orElseThrow(IllegalArgumentException::new).remove(currentColor);
         if (currentState.equals(State.SPECIAL2)) {
             switchColor();
         } else {
@@ -183,28 +196,24 @@ public class Pylos {
         }
     }
 
-    void pass() {
+    private void pass() {
         if (currentState.equals(State.CLASSIC)) {
             throw new IllegalArgumentException("can't pass : have to put a ball");
         }
         switchColor();
     }
 
-    void move(int xFrom, int yFrom, int xTo, int yTo) {
+    private void move(String coordinatesFrom, String coordinatesTo) {
         if (!currentState.equals(State.CLASSIC)) {
             throw new IllegalArgumentException("can't move : have to pass or remove a ball");
         }
-        int positionFrom = getColumn(xFrom, yFrom).getPosition();
-        int positionTo = getColumn(xTo, yTo).getPosition();
-        if (max(positionFrom, 0) >= max(positionTo, 0)) {
+        int positionFrom = getBallPosition(coordinatesFrom).map(BallPosition::getZ).orElseThrow(() -> new IllegalArgumentException(coordinatesFrom));
+        int positionTo = getBallPosition(coordinatesTo).map(BallPosition::getZ).orElseThrow(() -> new IllegalArgumentException(coordinatesTo));
+        if (positionFrom >= positionTo) {
             throw new IllegalArgumentException("can't move: destination should be higher");
         }
-        positionFrom = getColumn(xFrom, yFrom).remove(currentColor);
-        positionTo = getColumn(xTo, yTo).put(currentColor);
-        if (positionTo <= positionFrom) {
-            getColumn(xFrom, yFrom).put(currentColor);
-            getColumn(xTo, yTo).remove(currentColor);
-        }
+        getBallPosition(coordinatesFrom).orElseThrow(() -> new IllegalArgumentException(coordinatesFrom)).remove(currentColor);
+        getBallPosition(coordinatesTo).orElseThrow(() -> new IllegalArgumentException(coordinatesTo)).put(currentColor);
         if (currentState == State.CLASSIC) {
             switchColor();
         }
@@ -212,15 +221,45 @@ public class Pylos {
 
     boolean over() {
         return allCoordinates()
-                .map(c -> ballPositions[c.x][c.y][c.level].getColor())
-                .anyMatch(color -> color != null);
+                .map(c -> ballPositions[c.x][c.y][c.level])
+                .allMatch(BallPosition::isNotEmpty);
     }
 
     List<Command> nextMoves() {
-        return allCoordinates()
-                .filter(c -> getColumn(c.x - 3, c.y - 3).canAcceptBall())
-                .map(c -> new Put(c.x - 3, c.y - 3))
-                .collect(toList());
+        List<Command> commands = new ArrayList<>();
+        if (currentState.equals(State.CLASSIC)) {
+            ballPositionsByCoordinates.values().stream()
+                    .filter(BallPosition::canAcceptBall)
+                    .map(ballPosition -> new Put(ballPosition.convertToNewSystem()))
+                    .forEach(commands::add);
+            Stream<BallPosition> freeToPutPositions = ballPositionsByCoordinates.values().stream()
+                    .filter(BallPosition::canAcceptBall);
+            List<BallPosition> freeToTakePositions = ballPositionsByCoordinates.values().stream()
+                    .filter(BallPosition::canBeTaken)
+                    .filter(ballPosition -> currentColor.equals(ballPosition.getColor()))
+                    .collect(toList());
+            freeToPutPositions
+                    .filter(c -> c.getZ() > 0)
+                    .forEach(upper ->
+                            freeToTakePositions.stream()
+                                    .filter(lower -> lower.getZ() < upper.getZ())
+                                    .filter(upper::isNotOnTopOf)
+                                    .map(lower -> new Move(
+                                            lower.convertToNewSystem(),
+                                            upper.convertToNewSystem()
+                                    ))
+                                    .forEach(commands::add)
+                    );
+        } else {
+            ballPositionsByCoordinates.values().stream()
+                    .filter(BallPosition::canBeTaken)
+                    .filter(ballPosition -> currentColor.equals(ballPosition.getColor()))
+                    .map(ballPosition -> new Remove(ballPosition.convertToNewSystem()))
+                    .forEach(commands::add);
+            commands.add(Command.pass);
+        }
+
+        return commands;
     }
 
     Stream<Coordinates> allCoordinates() {
