@@ -2,6 +2,8 @@ package pylos.game;
 
 import org.junit.Before;
 import org.junit.Test;
+import pylos.game.command.Command;
+import pylos.game.command.Put;
 
 import java.util.List;
 

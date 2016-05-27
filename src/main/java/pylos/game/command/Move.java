@@ -1,12 +1,12 @@
-package pylos.game;
+package pylos.game.command;
 
 import java.util.Objects;
 
-class Move implements Command {
-    final String coordinatesFrom;
-    final String coordinatesTo;
+public class Move implements Command {
+    public final String coordinatesFrom;
+    public final String coordinatesTo;
 
-    Move(String coordinatesFrom, String coordinatesTo) {
+    public Move(String coordinatesFrom, String coordinatesTo) {
         this.coordinatesFrom = coordinatesFrom;
         this.coordinatesTo = coordinatesTo;
     }

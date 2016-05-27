@@ -1,5 +1,7 @@
 package pylos.game;
 
+import pylos.game.command.Command;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;

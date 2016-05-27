@@ -1,5 +1,10 @@
 package pylos.game;
 
+import pylos.game.command.Command;
+import pylos.game.command.Move;
+import pylos.game.command.Put;
+import pylos.game.command.Remove;
+
 import java.util.*;
 import java.util.stream.Stream;
 

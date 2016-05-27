@@ -2,6 +2,10 @@ package pylos.game;
 
 import org.junit.Before;
 import org.junit.Test;
+import pylos.game.command.Command;
+import pylos.game.command.Move;
+import pylos.game.command.Put;
+import pylos.game.command.Remove;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;

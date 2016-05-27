@@ -1,11 +1,11 @@
-package pylos.game;
+package pylos.game.command;
 
 import java.util.Objects;
 
-class Remove implements Command {
-    final String coordinates;
+public class Put implements Command {
+    public final String coordinates;
 
-    Remove(String coordinates) {
+    public Put(String coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -13,8 +13,8 @@ class Remove implements Command {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Remove remove = (Remove) o;
-        return Objects.equals(coordinates, remove.coordinates);
+        Put put = (Put) o;
+        return Objects.equals(coordinates, put.coordinates);
     }
 
     @Override
@@ -24,6 +24,6 @@ class Remove implements Command {
 
     @Override
     public String toString() {
-        return "remove " + coordinates;
+        return "put " + coordinates;
     }
 }

@@ -1,6 +1,6 @@
-package pylos.game;
+package pylos.game.command;
 
-interface Command {
+public interface Command {
     Command pass = new Command() {
         @Override
         public String toString() {

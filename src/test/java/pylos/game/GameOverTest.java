@@ -2,6 +2,7 @@ package pylos.game;
 
 import org.junit.Before;
 import org.junit.Test;
+import pylos.game.command.Put;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
