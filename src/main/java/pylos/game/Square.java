@@ -1,5 +1,7 @@
 package pylos.game;
 
+import java.util.Optional;
+
 class Square {
 
     private BallPosition[] ballPositions;
@@ -8,7 +10,7 @@ class Square {
 
     private Pylos pylos;
 
-    Square(final BallPosition[] ballPositions, final Pylos pylos) {
+    Square(final Pylos pylos, final BallPosition... ballPositions) {
         this.ballPositions = ballPositions;
         this.numberOfBalls = 0;
         this.pylos = pylos;
@@ -25,13 +27,16 @@ class Square {
         if (numberOfBalls == 4) {
 
             // check if ball that have just been added have created a special move
-            Color color = ballPositions[0].getColor();
-            boolean sameColor = true;
-            for (int i = 1; i < 4; i++) {
-                sameColor &= color.equals(ballPositions[i].getColor());
-            }
-            if (sameColor) {
-                pylos.specialMove();
+            Optional<Color> maybeFirstColor = ballPositions[0].getColor();
+            if (maybeFirstColor.isPresent()) {
+                Color firstColor = maybeFirstColor.get();
+                boolean sameColor = true;
+                for (int i = 1; i < 4; i++) {
+                    sameColor &= ballPositions[i].getColor().map(firstColor::equals).orElse(false);
+                }
+                if (sameColor) {
+                    pylos.specialMove();
+                }
             }
         }
     }

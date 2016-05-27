@@ -3,10 +3,10 @@ package pylos.game;
 import pylos.game.command.Command;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 public class Game {
@@ -38,52 +38,19 @@ public class Game {
     // a1  b1  c1  d1
 
     private static void printBoard(Pylos pylos) {
-        pylos.allCoordinates().forEach(c -> {
-            final int level = c.level + 1;
-            if (c.x == c.y && c.x == c.level) {
+        final List<String> newLevelMarkers = asList("a1", "e1", "h1", "j1");
+        pylos.allPositions().forEach(c -> {
+            if (newLevelMarkers.contains(c.coordinates)) {
                 System.out.print("\n\n");
-                System.out.print("    layer " + level + ":\n");
+                System.out.print("    layer " + c.level + ":\n");
                 System.out.print("  ");
-                IntStream.range(1, 6 - level).forEach(column -> System.out.print("   " + column));
+                IntStream.range(1, 6 - c.level).forEach(column -> System.out.print("   " + column));
             }
-            if (c.y == c.level) {
-                System.out.print("\n" + toLine(c) + "    ");
+            if (c.coordinates.matches(".1")) {
+                System.out.print("\n" + c.coordinates.substring(0, 1) + "    ");
             }
-            System.out.print(Optional.ofNullable(pylos.getBallPosition(c.x - 3, c.y - 3, c.level).getColor()).map(Object::toString).orElse("X") + "   ");
+            System.out.print(c.getColor().map(Object::toString).orElse("X") + "   ");
         });
     }
 
-    private static String toLine(Pylos.Coordinates c) {
-        if (c.x == 0 && c.y == 0) {
-            return "a";
-        }
-        if (c.x == 2 && c.y == 0) {
-            return "b";
-        }
-        if (c.x == 4 && c.y == 0) {
-            return "c";
-        }
-        if (c.x == 6 && c.y == 0) {
-            return "d";
-        }
-        if (c.x == 1 && c.y == 1) {
-            return "e";
-        }
-        if (c.x == 3 && c.y == 1) {
-            return "f";
-        }
-        if (c.x == 5 && c.y == 1) {
-            return "g";
-        }
-        if (c.x == 2 && c.y == 2) {
-            return "h";
-        }
-        if (c.x == 4 && c.y == 2) {
-            return "i";
-        }
-        if (c.x == 3 && c.y == 3) {
-            return "j";
-        }
-        return null;
-    }
 }

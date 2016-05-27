@@ -7,8 +7,11 @@ import pylos.game.command.Move;
 import pylos.game.command.Put;
 import pylos.game.command.Remove;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static pylos.game.Color.BLACK;
 
 public class PylosTest {
 
@@ -77,8 +80,7 @@ public class PylosTest {
 
         pylos.apply(new Put("e1"));
 
-        assertThat(pylos.getBallPosition("e1")).hasValueSatisfying(actual ->
-                assertThat(actual.getColor()).isNotNull());
+        assertThat(pylos.getBallPosition("e1")).hasValueSatisfying(BallPosition::isNotEmpty);
     }
 
     @Test
@@ -91,8 +93,7 @@ public class PylosTest {
 
         pylos.apply(new Move("d4", "e1"));
 
-        assertThat(pylos.getBallPosition("e1")).hasValueSatisfying(ballPosition ->
-                assertThat(ballPosition.getColor()).isNotNull());
+        assertThat(pylos.getBallPosition("e1")).hasValueSatisfying(BallPosition::isNotEmpty);
     }
 
     @Test
@@ -224,7 +225,7 @@ public class PylosTest {
 
         pylos.apply(Command.pass);
 
-        assertThat(currentColor()).isEqualTo(Color.BLACK);
+        assertThat(currentColor()).hasValue(BLACK);
     }
 
     private void whiteHasSquare() {
@@ -244,9 +245,9 @@ public class PylosTest {
         pylos.apply(new Put("a3"));
     }
 
-    private Color currentColor() {
+    private Optional<Color> currentColor() {
         pylos.apply(new Put("c1"));
-        return pylos.getBallPosition("c1").orElseThrow(IllegalStateException::new).getColor();
+        return pylos.getBallPosition("c1").flatMap(BallPosition::getColor);
     }
 
 }
