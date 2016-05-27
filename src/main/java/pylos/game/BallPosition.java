@@ -46,24 +46,12 @@ public class BallPosition {
     }
 
     int put(final Color color) {
-        if (isNotEmpty()) {
-            throw new IllegalStateException("can't put a ball because this place is already filled");
-        }
         this.color = color;
         this.squares.forEach(Square::ballAdded);
         return level;
     }
 
     int remove(final Color color) {
-        if (color == null) {
-            throw new IllegalStateException("can't remove empty ball position");
-        }
-        if (hasBallOnTopOfIt()) {
-            throw new IllegalStateException("can't remove ball because there is some ball(s) on top of it");
-        }
-        if (!color.equals(this.color)) {
-            throw new IllegalStateException("can't remove a ball that don't belongs to the current color");
-        }
         this.color = null;
         this.squares.forEach(Square::ballRemoved);
         return level;

@@ -40,8 +40,6 @@ public class Pylos {
             remove(removeCommand.coordinates);
         } else if (command.equals(Command.pass)) {
             pass();
-        } else {
-            throw new IllegalArgumentException(command + " is not yet handled");
         }
     }
 
@@ -63,9 +61,6 @@ public class Pylos {
     }
 
     private void put(String coordinates) {
-        if (currentState != State.CLASSIC) {
-            throw new IllegalStateException("can't put a new ball : have to pass or remove ball");
-        }
         ballPositionsByCoordinates.get(coordinates).put(currentColor);
         if (currentState == State.CLASSIC) {
             switchColor();
@@ -73,9 +68,6 @@ public class Pylos {
     }
 
     private void remove(String coordinates) {
-        if (currentState == State.CLASSIC) {
-            throw new IllegalStateException("can't remove a ball : have to make square or lines in order to");
-        }
         getBallPosition(coordinates).orElseThrow(IllegalArgumentException::new).remove(currentColor);
         if (currentState.equals(State.SPECIAL2)) {
             switchColor();
@@ -85,21 +77,12 @@ public class Pylos {
     }
 
     private void pass() {
-        if (currentState.equals(State.CLASSIC)) {
-            throw new IllegalArgumentException("can't pass : have to put a ball");
-        }
         switchColor();
     }
 
     private void move(String coordinatesFrom, String coordinatesTo) {
-        if (!currentState.equals(State.CLASSIC)) {
-            throw new IllegalArgumentException("can't move : have to pass or remove a ball");
-        }
         final BallPosition ballPositionFrom = getBallPosition(coordinatesFrom).orElseThrow(() -> new IllegalArgumentException(coordinatesFrom));
         final BallPosition ballPositionTo = getBallPosition(coordinatesTo).orElseThrow(() -> new IllegalArgumentException(coordinatesTo));
-        if (ballPositionFrom.level >= ballPositionTo.level) {
-            throw new IllegalArgumentException("can't move: destination should be higher");
-        }
         ballPositionFrom.remove(currentColor);
         ballPositionTo.put(currentColor);
         if (currentState == State.CLASSIC) {
