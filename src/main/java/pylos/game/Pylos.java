@@ -15,6 +15,8 @@ public class Pylos {
 
     private final Map<String, BallPosition> ballPositionsByCoordinates;
 
+    private final List<Command> nextMoves;
+
     private Color currentColor;
 
     private State currentState;
@@ -23,11 +25,12 @@ public class Pylos {
         currentColor = Color.WHITE;
         currentState = State.CLASSIC;
         ballPositionsByCoordinates = new PylosBuilder(this).createBallPositions();
+        nextMoves = computeNextMoves();
     }
 
-    void apply(Command command) {
-        if (!nextMoves().contains(command)) {
-            throw new IllegalArgumentException(command + " is not applicable. Only " + nextMoves() + " are applicable");
+    public void apply(Command command) {
+        if (!nextMoves.contains(command)) {
+            throw new IllegalArgumentException(command + " is not applicable. Only " + nextMoves + " are applicable");
         }
         if (command instanceof Put) {
             Put putCommand = (Put) command;
@@ -41,6 +44,8 @@ public class Pylos {
         } else if (command.equals(Command.pass)) {
             pass();
         }
+        nextMoves.clear();
+        nextMoves.addAll(computeNextMoves());
     }
 
     void specialMove() {
@@ -68,7 +73,7 @@ public class Pylos {
     }
 
     private void remove(String coordinates) {
-        getBallPosition(coordinates).orElseThrow(IllegalArgumentException::new).remove(currentColor);
+        ballPositionsByCoordinates.get(coordinates).remove();
         if (currentState.equals(State.SPECIAL2)) {
             switchColor();
         } else {
@@ -81,49 +86,48 @@ public class Pylos {
     }
 
     private void move(String coordinatesFrom, String coordinatesTo) {
-        final BallPosition ballPositionFrom = getBallPosition(coordinatesFrom).orElseThrow(() -> new IllegalArgumentException(coordinatesFrom));
-        final BallPosition ballPositionTo = getBallPosition(coordinatesTo).orElseThrow(() -> new IllegalArgumentException(coordinatesTo));
-        ballPositionFrom.remove(currentColor);
-        ballPositionTo.put(currentColor);
+        ballPositionsByCoordinates.get(coordinatesFrom).remove();
+        ballPositionsByCoordinates.get(coordinatesTo).put(currentColor);
         if (currentState == State.CLASSIC) {
             switchColor();
         }
     }
 
-    boolean over() {
+    public boolean gameover() {
         return allPositions().allMatch(BallPosition::isNotEmpty);
     }
 
-    List<Command> nextMoves() {
+    public List<Command> nextMoves() {
+        return nextMoves;
+    }
+
+    private List<Command> computeNextMoves() {
         List<Command> commands = new ArrayList<>();
         if (currentState.equals(State.CLASSIC)) {
-            ballPositionsByCoordinates.values().stream()
-                    .filter(BallPosition::canAcceptBall)
-                    .map(ballPosition -> new Put(ballPosition.coordinates))
-                    .forEach(commands::add);
-            Stream<BallPosition> freeToPutPositions = ballPositionsByCoordinates.values().stream()
-                    .filter(BallPosition::canAcceptBall);
+            freeToPutPositions().map(ballPosition -> new Put(ballPosition.coordinates)).forEach(commands::add);
+
             List<BallPosition> freeToTakePositions = freeToTakePositions().collect(toList());
-            freeToPutPositions
+            freeToPutPositions()
                     .filter(c -> c.level > 1)
                     .forEach(upper ->
                             freeToTakePositions.stream()
                                     .filter(lower -> lower.level < upper.level)
                                     .filter(upper::isNotOnTopOf)
-                                    .map(lower -> new Move(
-                                            lower.coordinates,
-                                            upper.coordinates
-                                    ))
-                                    .forEach(commands::add)
-                    );
+                                    .map(lower -> new Move(lower.coordinates, upper.coordinates))
+                                    .forEach(commands::add));
         } else {
             commands.addAll(freeToTakePositions()
                     .map(ballPosition -> new Remove(ballPosition.coordinates))
                     .collect(toList()));
+
             commands.add(Command.pass);
         }
 
         return commands;
+    }
+
+    private Stream<BallPosition> freeToPutPositions() {
+        return ballPositionsByCoordinates.values().stream().filter(BallPosition::canAcceptBall);
     }
 
     private Stream<BallPosition> freeToTakePositions() {
@@ -132,8 +136,7 @@ public class Pylos {
                 .filter(ballPosition -> ballPosition.getColor().map(currentColor::equals).orElse(false));
     }
 
-    Stream<BallPosition> allPositions() {
+    public Stream<BallPosition> allPositions() {
         return ballPositionsByCoordinates.values().stream();
     }
-
 }

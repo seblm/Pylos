@@ -1,6 +1,6 @@
 package pylos.game;
 
-enum Color {
+public enum Color {
     BLACK('-'),
     WHITE('O');
 

@@ -17,7 +17,7 @@ public class GameOverTest {
 
     @Test
     public void should_tell_game_is_not_over_when_it_has_just_been_started() {
-        boolean gameOver = pylos.over();
+        boolean gameOver = pylos.gameover();
 
         assertThat(gameOver).isFalse();
     }
@@ -55,7 +55,7 @@ public class GameOverTest {
         pylos.apply(new Put("i1"));
         pylos.apply(new Put("j1"));
 
-        boolean gameOver = pylos.over();
+        boolean gameOver = pylos.gameover();
 
         assertThat(gameOver).isTrue();
     }

@@ -1,5 +1,6 @@
-package pylos.game;
+package pylos.game.runner;
 
+import pylos.game.Pylos;
 import pylos.game.command.Command;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import static java.util.stream.Collectors.joining;
 public class Game {
     public static void main(String[] args) {
         final Pylos pylos = new Pylos();
-        while (!pylos.over()) {
+        while (!pylos.gameover()) {
             printBoard(pylos);
 
             List<Command> nextMoves = pylos.nextMoves();
@@ -39,17 +40,17 @@ public class Game {
 
     private static void printBoard(Pylos pylos) {
         final List<String> newLevelMarkers = asList("a1", "e1", "h1", "j1");
-        pylos.allPositions().forEach(c -> {
-            if (newLevelMarkers.contains(c.coordinates)) {
+        pylos.allPositions().forEach(position -> {
+            if (newLevelMarkers.contains(position.coordinates)) {
                 System.out.print("\n\n");
-                System.out.print("    layer " + c.level + ":\n");
+                System.out.print("    layer " + position.level + ":\n");
                 System.out.print("  ");
-                IntStream.range(1, 6 - c.level).forEach(column -> System.out.print("   " + column));
+                IntStream.range(1, 6 - position.level).forEach(column -> System.out.print("   " + column));
             }
-            if (c.coordinates.matches(".1")) {
-                System.out.print("\n" + c.coordinates.substring(0, 1) + "    ");
+            if (position.coordinates.matches(".1")) {
+                System.out.print("\n" + position.coordinates.substring(0, 1) + "    ");
             }
-            System.out.print(c.getColor().map(Object::toString).orElse("X") + "   ");
+            System.out.print(position.getColor().map(Object::toString).orElse("X") + "   ");
         });
     }
 

@@ -9,8 +9,8 @@ public class BallPosition {
     private final Set<BallPosition> ballPositionsOnTopOfMyself;
     private final Set<BallPosition> ballPositionsAtTheBottomOfMyself;
     private final Set<Square> squares;
-    final int level;
-    final String coordinates;
+    public final int level;
+    public final String coordinates;
 
     private Color color;
 
@@ -51,13 +51,13 @@ public class BallPosition {
         return level;
     }
 
-    int remove(final Color color) {
+    int remove() {
         this.color = null;
         this.squares.forEach(Square::ballRemoved);
         return level;
     }
 
-    Optional<Color> getColor() {
+    public Optional<Color> getColor() {
         return Optional.ofNullable(color);
     }
 
