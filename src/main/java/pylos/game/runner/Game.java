@@ -1,33 +1,40 @@
 package pylos.game.runner;
 
+import pylos.game.BallPosition;
+import pylos.game.Color;
 import pylos.game.Pylos;
+import pylos.game.PylosRound;
 import pylos.game.command.Command;
+import pylos.game.player.Player;
+import pylos.game.player.RandomPlayer;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
 
 public class Game {
     public static void main(String[] args) {
         final Pylos pylos = new Pylos();
+        final Map<Color, Player> players = new HashMap<>();
+        players.put(Color.WHITE, new RandomPlayer());
+        players.put(Color.BLACK, new RandomPlayer());
         while (!pylos.gameover()) {
             printBoard(pylos);
 
-            List<Command> nextMoves = pylos.nextMoves();
-            System.out.print("\n"
-                    + "Here are all valid moves:\n"
-                    + nextMoves.stream().map(Object::toString).collect(joining("; "))
-                    + "\n");
-            Command nextMove = nextMoves.get(new Random().nextInt(nextMoves.size()));
+            PylosRound currentRound = pylos.nextMoves();
+            Command nextMove = players.get(currentRound.currentColor).play(currentRound.nextMoves);
 
-            System.out.print("The program will pick you some random move for you: " + nextMove);
             pylos.apply(nextMove);
 
             printBoard(pylos);
         }
+
+        pylos.allPositions().filter(position -> position.level == 4).findFirst().flatMap(BallPosition::getColor).ifPresent(color ->
+                System.out.print("\ncolor " + color.name() + " controlled by " + players.get(color) + " has won")
+        );
     }
 
     // a4  b4  c4  d4

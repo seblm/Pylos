@@ -20,7 +20,7 @@ public class NextMovesTest {
 
     @Test
     public void should_gives_next_moves_for_first_move() {
-        List<Command> nextMoves = pylos.nextMoves();
+        List<Command> nextMoves = pylos.nextMoves().nextMoves;
 
         assertThat(nextMoves).containsOnly(
                 new Put("a1"),  new Put("a2"),  new Put("a3"), new Put("a4"),
@@ -34,7 +34,7 @@ public class NextMovesTest {
     public void should_gives_next_moves_for_second_move() {
         pylos.apply(new Put("a1"));
 
-        List<Command> nextMoves = pylos.nextMoves();
+        List<Command> nextMoves = pylos.nextMoves().nextMoves;
 
         assertThat(nextMoves).doesNotContain(new Put("a1"));
     }
@@ -46,7 +46,7 @@ public class NextMovesTest {
         pylos.apply(new Put("b1"));
         pylos.apply(new Put("b2"));
 
-        List<Command> nextMoves = pylos.nextMoves();
+        List<Command> nextMoves = pylos.nextMoves().nextMoves;
 
         assertThat(nextMoves).contains(new Put("e1"));
     }

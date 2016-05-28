@@ -97,8 +97,8 @@ public class Pylos {
         return allPositions().allMatch(BallPosition::isNotEmpty);
     }
 
-    public List<Command> nextMoves() {
-        return nextMoves;
+    public PylosRound nextMoves() {
+        return new PylosRound(currentColor, nextMoves);
     }
 
     private List<Command> computeNextMoves() {
