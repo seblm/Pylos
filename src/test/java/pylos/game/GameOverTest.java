@@ -36,10 +36,10 @@ public class GameOverTest {
         pylos.apply(new Put("c3"));
         pylos.apply(new Put("c2"));
         pylos.apply(new Put("c1"));
-        pylos.apply(new Put("d4"));
         pylos.apply(new Put("d3"));
-        pylos.apply(new Put("d2"));
+        pylos.apply(new Put("d4"));
         pylos.apply(new Put("d1"));
+        pylos.apply(new Put("d2"));
         pylos.apply(new Put("e3"));
         pylos.apply(new Put("e2"));
         pylos.apply(new Put("e1"));

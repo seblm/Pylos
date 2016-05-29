@@ -9,6 +9,7 @@ public class BallPosition {
     private final Set<BallPosition> ballPositionsOnTopOfMyself;
     private final Set<BallPosition> ballPositionsAtTheBottomOfMyself;
     private final Set<Square> squares;
+    private final Set<Line> lines;
     public final int level;
     public final String coordinates;
 
@@ -18,6 +19,7 @@ public class BallPosition {
         this.ballPositionsOnTopOfMyself = new HashSet<>();
         this.ballPositionsAtTheBottomOfMyself = new HashSet<>();
         this.squares = new HashSet<>();
+        this.lines = new HashSet<>();
         this.level = level;
         this.coordinates = coordinates;
         this.color = null;
@@ -40,6 +42,9 @@ public class BallPosition {
         squares.add(square);
     }
 
+    void addLine(final Line line) {
+        lines.add(line);
+    }
     @Override
     public String toString() {
         return getColor().map(Object::toString).orElseGet(() -> "X") + ' ' + coordinates + " (level " + level + ')';
@@ -48,6 +53,7 @@ public class BallPosition {
     int put(final Color color) {
         this.color = color;
         this.squares.forEach(Square::ballAdded);
+        this.lines.forEach(Line::ballAdded);
         return level;
     }
 
