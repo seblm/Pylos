@@ -7,23 +7,23 @@ import java.util.stream.Stream;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toSet;
 
-public class Line {
+public class Pattern {
 
     private final Pylos pylos;
     private final Set<BallPosition> positions;
 
-    public Line(Pylos pylos, BallPosition first, BallPosition second, BallPosition third, BallPosition fourth) {
+    public Pattern(Pylos pylos, BallPosition first, BallPosition second, BallPosition third, BallPosition fourth) {
         this(pylos, Stream.of(first, second, third, fourth));
     }
 
-    public Line(Pylos pylos, BallPosition first, BallPosition second, BallPosition third) {
+    public Pattern(Pylos pylos, BallPosition first, BallPosition second, BallPosition third) {
         this(pylos, Stream.of(first, second, third));
     }
 
-    private Line(Pylos pylos, Stream<BallPosition> ballPositions) {
+    private Pattern(Pylos pylos, Stream<BallPosition> ballPositions) {
         this.pylos = pylos;
         this.positions = ballPositions
-                .peek(ballPosition -> ballPosition.addLine(this))
+                .peek(ballPosition -> ballPosition.addPattern(this))
                 .collect(toSet());
     }
 

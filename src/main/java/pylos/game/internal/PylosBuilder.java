@@ -1,7 +1,7 @@
 package pylos.game.internal;
 
 import pylos.game.BallPosition;
-import pylos.game.Line;
+import pylos.game.Pattern;
 import pylos.game.Pylos;
 
 import java.util.LinkedHashMap;
@@ -136,22 +136,22 @@ public class PylosBuilder {
                 .addBallPositionAtTheBottomOfMyself(registry.get("i2"), pylos);
 
         // level 1
-        new Line(pylos, registry.get("a1"), registry.get("a2"), registry.get("a3"), registry.get("a4"));
-        new Line(pylos, registry.get("b1"), registry.get("b2"), registry.get("b3"), registry.get("b4"));
-        new Line(pylos, registry.get("c1"), registry.get("c2"), registry.get("c3"), registry.get("c4"));
-        new Line(pylos, registry.get("d1"), registry.get("d2"), registry.get("d3"), registry.get("d4"));
-        new Line(pylos, registry.get("a1"), registry.get("b1"), registry.get("c1"), registry.get("d1"));
-        new Line(pylos, registry.get("a2"), registry.get("b2"), registry.get("c2"), registry.get("d2"));
-        new Line(pylos, registry.get("a3"), registry.get("b3"), registry.get("c3"), registry.get("d3"));
-        new Line(pylos, registry.get("a4"), registry.get("b4"), registry.get("c4"), registry.get("d4"));
+        new Pattern(pylos, registry.get("a1"), registry.get("a2"), registry.get("a3"), registry.get("a4"));
+        new Pattern(pylos, registry.get("b1"), registry.get("b2"), registry.get("b3"), registry.get("b4"));
+        new Pattern(pylos, registry.get("c1"), registry.get("c2"), registry.get("c3"), registry.get("c4"));
+        new Pattern(pylos, registry.get("d1"), registry.get("d2"), registry.get("d3"), registry.get("d4"));
+        new Pattern(pylos, registry.get("a1"), registry.get("b1"), registry.get("c1"), registry.get("d1"));
+        new Pattern(pylos, registry.get("a2"), registry.get("b2"), registry.get("c2"), registry.get("d2"));
+        new Pattern(pylos, registry.get("a3"), registry.get("b3"), registry.get("c3"), registry.get("d3"));
+        new Pattern(pylos, registry.get("a4"), registry.get("b4"), registry.get("c4"), registry.get("d4"));
 
         // level 2
-        new Line(pylos, registry.get("e1"), registry.get("e2"), registry.get("e3"));
-        new Line(pylos, registry.get("f1"), registry.get("f2"), registry.get("f3"));
-        new Line(pylos, registry.get("g1"), registry.get("g2"), registry.get("g3"));
-        new Line(pylos, registry.get("e1"), registry.get("f1"), registry.get("g1"));
-        new Line(pylos, registry.get("e2"), registry.get("f2"), registry.get("g2"));
-        new Line(pylos, registry.get("e3"), registry.get("f3"), registry.get("g3"));
+        new Pattern(pylos, registry.get("e1"), registry.get("e2"), registry.get("e3"));
+        new Pattern(pylos, registry.get("f1"), registry.get("f2"), registry.get("f3"));
+        new Pattern(pylos, registry.get("g1"), registry.get("g2"), registry.get("g3"));
+        new Pattern(pylos, registry.get("e1"), registry.get("f1"), registry.get("g1"));
+        new Pattern(pylos, registry.get("e2"), registry.get("f2"), registry.get("g2"));
+        new Pattern(pylos, registry.get("e3"), registry.get("f3"), registry.get("g3"));
 
         return registry;
     }

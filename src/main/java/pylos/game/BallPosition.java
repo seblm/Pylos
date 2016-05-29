@@ -8,8 +8,7 @@ public class BallPosition {
 
     private final Set<BallPosition> ballPositionsOnTopOfMyself;
     private final Set<BallPosition> ballPositionsAtTheBottomOfMyself;
-    private final Set<Square> squares;
-    private final Set<Line> lines;
+    private final Set<Pattern> patterns;
     public final int level;
     public final String coordinates;
 
@@ -18,8 +17,7 @@ public class BallPosition {
     public BallPosition(String coordinates, int level) {
         this.ballPositionsOnTopOfMyself = new HashSet<>();
         this.ballPositionsAtTheBottomOfMyself = new HashSet<>();
-        this.squares = new HashSet<>();
-        this.lines = new HashSet<>();
+        this.patterns = new HashSet<>();
         this.level = level;
         this.coordinates = coordinates;
         this.color = null;
@@ -29,7 +27,8 @@ public class BallPosition {
         ballPositionsAtTheBottomOfMyself.add(ballPosition);
         ballPosition.addBallPositionOnTopOfIt(this);
         if (ballPositionsAtTheBottomOfMyself.size() == 4) {
-            new Square(pylos, ballPositionsAtTheBottomOfMyself.toArray(new BallPosition[]{}));
+            BallPosition[] ballPositions = ballPositionsAtTheBottomOfMyself.toArray(new BallPosition[]{});
+            new Pattern(pylos, ballPositions[0], ballPositions[1], ballPositions[2], ballPositions[3]);
         }
         return this;
     }
@@ -38,13 +37,10 @@ public class BallPosition {
         ballPositionsOnTopOfMyself.add(ballPosition);
     }
 
-    void addSquare(final Square square) {
-        squares.add(square);
+    void addPattern(final Pattern pattern) {
+        patterns.add(pattern);
     }
 
-    void addLine(final Line line) {
-        lines.add(line);
-    }
     @Override
     public String toString() {
         return getColor().map(Object::toString).orElseGet(() -> "X") + ' ' + coordinates + " (level " + level + ')';
@@ -52,14 +48,12 @@ public class BallPosition {
 
     int put(final Color color) {
         this.color = color;
-        this.squares.forEach(Square::ballAdded);
-        this.lines.forEach(Line::ballAdded);
+        this.patterns.forEach(Pattern::ballAdded);
         return level;
     }
 
     int remove() {
         this.color = null;
-        this.squares.forEach(Square::ballRemoved);
         return level;
     }
 
