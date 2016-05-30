@@ -6,12 +6,17 @@ import pylos.game.command.Put;
 import pylos.game.command.Remove;
 import pylos.game.internal.PylosBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
 public class Pylos {
+
+    private static final long MAX_NUMBER_OF_BALLS = 15L;
 
     private final Map<String, BallPosition> ballPositionsByCoordinates;
 
@@ -53,12 +58,10 @@ public class Pylos {
     }
 
     private void switchColor() {
-        if (currentColor.equals(Color.WHITE)) {
-            currentColor = Color.BLACK;
-        } else {
-            currentColor = Color.WHITE;
-        }
         currentState = State.CLASSIC;
+        if (otherColorHaveStillBallsToPut()) {
+            currentColor = otherColor();
+        }
     }
 
     Optional<BallPosition> getBallPosition(String coordinates) {
@@ -138,5 +141,20 @@ public class Pylos {
 
     public Stream<BallPosition> allPositions() {
         return ballPositionsByCoordinates.values().stream();
+    }
+
+    private Color otherColor() {
+        if (currentColor.equals(Color.WHITE)) {
+            return Color.BLACK;
+        } else {
+            return Color.WHITE;
+        }
+    }
+
+    private boolean otherColorHaveStillBallsToPut() {
+        return ballPositionsByCoordinates.values().stream()
+                .map(BallPosition::getColor)
+                .filter(maybeColor -> maybeColor.map(color -> color == otherColor()).orElse(false))
+                .count() < MAX_NUMBER_OF_BALLS;
     }
 }
