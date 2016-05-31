@@ -61,7 +61,7 @@ public class BallPosition {
         return Optional.ofNullable(color);
     }
 
-    boolean canAcceptBall() {
+    public boolean canAcceptBall() {
         return !hasBallOnTopOfIt() && isStable() && isEmpty();
     }
 
