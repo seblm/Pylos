@@ -4,6 +4,7 @@ import pylos.game.BallPosition;
 import pylos.game.Pattern;
 import pylos.game.Pylos;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class PylosBuilder {
@@ -13,7 +14,7 @@ public class PylosBuilder {
         this.pylos = pylos;
     }
 
-    public LinkedHashMap<String, BallPosition> createBallPositions() {
+    public HashMap<String, BallPosition> createBallPositions() {
         final LinkedHashMap<String, BallPosition> registry = new LinkedHashMap<>();
 
         // creates ball positions

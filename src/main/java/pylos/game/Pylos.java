@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-
 public class Pylos {
 
     private static final long MAX_NUMBER_OF_BALLS = 15L;
@@ -37,15 +35,12 @@ public class Pylos {
         if (!nextMoves.contains(command)) {
             throw new IllegalArgumentException(command + " is not applicable. Only " + nextMoves + " are applicable");
         }
-        if (command instanceof Put) {
-            Put putCommand = (Put) command;
-            put(putCommand.coordinates);
-        } else if (command instanceof Move) {
-            Move moveCommand = (Move) command;
-            move(moveCommand.coordinatesFrom, moveCommand.coordinatesTo);
-        } else if (command instanceof Remove) {
-            Remove removeCommand = (Remove) command;
-            remove(removeCommand.coordinates);
+        if (command instanceof Put putCommand) {
+            put(putCommand.coordinates());
+        } else if (command instanceof Move moveCommand) {
+            move(moveCommand.coordinatesFrom(), moveCommand.coordinatesTo());
+        } else if (command instanceof Remove removeCommand) {
+            remove(removeCommand.coordinates());
         } else if (command.equals(Command.pass)) {
             pass();
         }
@@ -96,7 +91,7 @@ public class Pylos {
         }
     }
 
-    public boolean gameover() {
+    public boolean gameOver() {
         return allPositions().allMatch(BallPosition::isNotEmpty);
     }
 
@@ -109,7 +104,7 @@ public class Pylos {
         if (currentState.equals(State.CLASSIC)) {
             freeToPutPositions().map(ballPosition -> new Put(ballPosition.coordinates)).forEach(commands::add);
 
-            List<BallPosition> freeToTakePositions = freeToTakePositions().collect(toList());
+            List<BallPosition> freeToTakePositions = freeToTakePositions().toList();
             freeToPutPositions()
                     .filter(c -> c.level > 1)
                     .forEach(upper ->
@@ -119,10 +114,7 @@ public class Pylos {
                                     .map(lower -> new Move(lower.coordinates, upper.coordinates))
                                     .forEach(commands::add));
         } else {
-            commands.addAll(freeToTakePositions()
-                    .map(ballPosition -> new Remove(ballPosition.coordinates))
-                    .collect(toList()));
-
+            commands.addAll(freeToTakePositions().map(ballPosition -> new Remove(ballPosition.coordinates)).toList());
             commands.add(Command.pass);
         }
 

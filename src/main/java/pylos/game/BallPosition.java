@@ -43,18 +43,16 @@ public class BallPosition {
 
     @Override
     public String toString() {
-        return getColor().map(Object::toString).orElseGet(() -> "X") + ' ' + coordinates + " (level " + level + ')';
+        return getColor().map(Object::toString).orElse("X") + ' ' + coordinates + " (level " + level + ')';
     }
 
-    int put(final Color color) {
+    void put(final Color color) {
         this.color = color;
         this.patterns.forEach(Pattern::ballAdded);
-        return level;
     }
 
-    int remove() {
+    void remove() {
         this.color = null;
-        return level;
     }
 
     public Optional<Color> getColor() {
@@ -62,11 +60,11 @@ public class BallPosition {
     }
 
     public boolean canAcceptBall() {
-        return !hasBallOnTopOfIt() && isStable() && isEmpty();
+        return hasNoBallOnTopOfIt() && isStable() && isEmpty();
     }
 
     boolean canBeTaken() {
-        return !hasBallOnTopOfIt() && !isEmpty();
+        return hasNoBallOnTopOfIt() && !isEmpty();
     }
 
     boolean isNotOnTopOf(BallPosition lowerBallPosition) {
@@ -81,8 +79,8 @@ public class BallPosition {
         return !isEmpty();
     }
 
-    private boolean hasBallOnTopOfIt() {
-        return ballPositionsOnTopOfMyself.stream().anyMatch(BallPosition::isNotEmpty);
+    private boolean hasNoBallOnTopOfIt() {
+        return ballPositionsOnTopOfMyself.stream().noneMatch(BallPosition::isNotEmpty);
     }
 
     private boolean isStable() {

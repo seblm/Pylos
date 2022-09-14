@@ -23,10 +23,10 @@ public class NextMovesTest {
         List<Command> nextMoves = pylos.nextMoves().nextMoves;
 
         assertThat(nextMoves).containsOnly(
-                new Put("a1"),  new Put("a2"),  new Put("a3"), new Put("a4"),
-                new Put("b1"),  new Put("b2"),  new Put("b3"), new Put("b4"),
-                new Put("c1"),  new Put("c2"),  new Put("c3"), new Put("c4"),
-                new Put("d1"),  new Put("d2"),  new Put("d3"), new Put("d4")
+                new Put("a1"), new Put("a2"), new Put("a3"), new Put("a4"),
+                new Put("b1"), new Put("b2"), new Put("b3"), new Put("b4"),
+                new Put("c1"), new Put("c2"), new Put("c3"), new Put("c4"),
+                new Put("d1"), new Put("d2"), new Put("d3"), new Put("d4")
         );
     }
 

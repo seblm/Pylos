@@ -22,7 +22,7 @@ public class Game {
         final Map<Color, Player> players = new HashMap<>();
         players.put(Color.WHITE, new ConsolePlayer());
         players.put(Color.BLACK, new RandomPlayer());
-        while (!pylos.gameover()) {
+        while (!pylos.gameOver()) {
             printBoard(pylos);
 
             PylosRound currentRound = pylos.nextMoves();
@@ -74,7 +74,7 @@ public class Game {
     }
 
     private static String template(Map<String, String> positions, String template) {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         Matcher matcher = Pattern.compile("([a-j][1-4])").matcher(template);
         while (matcher.find()) {
             matcher.appendReplacement(out, positions.get(matcher.group(1)));

@@ -2,7 +2,7 @@ Implementation of Pylos.
 
 ## Requirements
 
-You need java 1.8 and maven.
+You need java 17 and maven.
 
 ## Usage
 

@@ -29,10 +29,10 @@ public class Pattern {
 
     void ballAdded() {
         Optional<Optional<Color>> reduced = positions.stream().map(BallPosition::getColor).reduce((left, right) -> {
-            if (!left.isPresent()) {
+            if (left.isEmpty()) {
                 return empty();
             }
-            if (!right.isPresent()) {
+            if (right.isEmpty()) {
                 return empty();
             }
             if (!left.get().equals(right.get())) {
