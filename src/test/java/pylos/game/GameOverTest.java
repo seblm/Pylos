@@ -1,7 +1,7 @@
 package pylos.game;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pylos.game.command.Move;
 import pylos.game.command.Put;
 import pylos.game.command.Remove;
@@ -14,7 +14,7 @@ public class GameOverTest {
 
     private Pylos pylos;
 
-    @Before
+    @BeforeEach
     public void createGame() {
         pylos = new Pylos();
     }

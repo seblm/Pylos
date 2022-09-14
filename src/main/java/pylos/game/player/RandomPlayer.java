@@ -12,4 +12,9 @@ public class RandomPlayer implements Player {
         System.out.print("The program will pick some random move: " + nextMove);
         return nextMove;
     }
+
+    @Override
+    public String toString() {
+        return "RandomPlayer";
+    }
 }

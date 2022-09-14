@@ -55,4 +55,9 @@ public class ConsolePlayer implements Player {
             throw new UncheckedIOException(e);
         }
     }
+
+    @Override
+    public String toString() {
+        return "RandomPlayer";
+    }
 }

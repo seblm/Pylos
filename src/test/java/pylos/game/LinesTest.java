@@ -1,7 +1,7 @@
 package pylos.game;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pylos.game.command.Command;
 import pylos.game.command.Put;
 import pylos.game.command.Remove;
@@ -13,7 +13,7 @@ public class LinesTest {
 
     private Pylos game;
 
-    @Before
+    @BeforeEach
     public void createPylos() {
         game = new Pylos();
     }
